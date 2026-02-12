@@ -5,11 +5,11 @@ services:
     image: mysql:8.0
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mvc_skeleton
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: thinkhuge
+      MYSQL_USER: thinkhuge
+      MYSQL_PASSWORD: thinkhuge
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./db:/var/lib/mysql

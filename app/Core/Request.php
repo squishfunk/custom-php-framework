@@ -39,12 +39,11 @@ class Request
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $path = $_SERVER['REQUEST_URI'] ?? '/';
-        
-        // Remove query string from path
+
         if (($pos = strpos($path, '?')) !== false) {
             $path = substr($path, 0, $pos);
         }
-        
+
         return new self(
             $method,
             $path,
@@ -83,5 +82,10 @@ class Request
     public function getPost(): array
     {
         return $this->post;
+    }
+
+    public function input(string $key): string
+    {
+        return $this->post[$key] ?? '';
     }
 }

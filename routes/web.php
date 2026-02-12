@@ -6,3 +6,4 @@ use App\Controller\UserController;
 /** @var Router $router */
 
 $router->get('/', [UserController::class, 'index']);
+$router->post('/', [UserController::class, 'store']);

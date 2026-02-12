@@ -53,16 +53,7 @@ class Database
         return self::$instance;
     }
 
-    /**
-     * Prevent cloning
-     */
-    private function __clone() {}
-
-    /**
-     * Prevent unserialization
-     */
-    public function __wakeup()
+    private function __clone()
     {
-        throw new \Exception('Cannot unserialize singleton');
     }
 }
