@@ -47,15 +47,30 @@ class Router
         $method = $request->getMethod();
         $path = $request->getPath();
 
-        if (!isset($this->routes[$method][$path])) {
-            return new Response(
-                '404 Not Found',
-                404
-            );
+        if (!isset($this->routes[$method])) {
+            return new Response('404 Not Found', 404);
         }
 
-        [$class, $method] = $this->routes[$method][$path];
+        foreach ($this->routes[$method] as $routePath => $handler) {
+            // Convert route path to regex: /user/{id} -> #^/user/([^/]+)$#
+            // Escape special regex characters in the route path, but not {}
+            // Then replace {param} with capture group
+            $pattern = preg_quote($routePath, '#');
+            $pattern = preg_replace('/\\\{([a-zA-Z0-9_]+)\\\}/', '([^/]+)', $pattern);
+            $pattern = "#^" . $pattern . "$#";
 
-        return (new $class())->$method($request);
+            if (preg_match($pattern, $path, $matches)) {
+                array_shift($matches);
+
+                [$class, $methodName] = $handler;
+
+                return (new $class())->$methodName($request, ...$matches); 
+            }
+        }
+
+        return new Response(
+            '404 Not Found',
+            404
+        );
     }
 }

@@ -67,6 +67,7 @@ class UserRepository
             'email' => $user->getEmail(),
             'balance' => $user->getBalance(),
         ]);
+        $user->setId((int) $this->db->lastInsertId());
     }
 
     public function update(User $user): void
@@ -80,5 +81,11 @@ class UserRepository
             'email' => $user->getEmail(),
             'balance' => $user->getBalance(),
         ]);
+    }
+
+    public function delete(int $id): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM users WHERE id = :id');
+        $stmt->execute(['id' => $id]);
     }
 }

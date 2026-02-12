@@ -84,8 +84,8 @@ class Request
         return $this->post;
     }
 
-    public function input(string $key): string
+    public function input(string $key): ?string
     {
-        return $this->post[$key] ?? '';
+        return isset($this->post[$key]) ? $this->post[$key] : null;
     }
 }

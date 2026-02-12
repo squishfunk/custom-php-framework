@@ -7,3 +7,6 @@ use App\Controller\UserController;
 
 $router->get('/', [UserController::class, 'index']);
 $router->post('/', [UserController::class, 'store']);
+$router->get('/{id}', [UserController::class, 'show']);
+$router->post('/{id}', [UserController::class, 'update']);
+$router->post('/{id}/delete', [UserController::class, 'delete']);
