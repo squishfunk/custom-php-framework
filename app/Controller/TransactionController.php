@@ -7,6 +7,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Service\ClientService;
 use App\Service\TransactionService;
+use App\Dto\TransactionDto;
 
 class TransactionController extends Controller
 {
@@ -46,8 +47,16 @@ class TransactionController extends Controller
         $description = $request->input('description');
         $date = $request->input('date');
 
+        $dto = new TransactionDto(
+            $clientId,
+            $type,
+            $amount,
+            $description,
+            $date
+        );
+
         try {
-            $this->transactionService->addTransaction($clientId, $type, $amount, $description, $date);
+            $this->transactionService->addTransaction($dto);
             $this->redirect('/clients/' . $clientId);
         } catch (\Exception $e) {
             return new Response('Error: ' . $e->getMessage());

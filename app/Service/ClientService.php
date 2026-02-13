@@ -3,22 +3,39 @@
 namespace App\Service;
 
 use App\Dto\ClientDto;
+use App\Dto\TransactionDto;
 use App\Entity\Client;
 use App\Repository\ClientRepository;
 
 class ClientService
 {
     private ClientRepository $clientRepository;
+    private TransactionService $transactionService;
 
     public function __construct()
     {
         $this->clientRepository = new ClientRepository();
+        $this->transactionService = new TransactionService();
     }
 
     public function createClient(ClientDto $dto): void
     {
-        $client = Client::create($dto->name, $dto->email, $dto->balance);
+        $initialBalance = $dto->balance;
+        $client = Client::create($dto->name, $dto->email, 0.0);
         $this->clientRepository->save($client);
+
+        if ($initialBalance != 0) {
+            $transactionDto = new TransactionDto(
+                $client->getId(),
+                $initialBalance > 0 ? 'earning' : 'expense', // ability to add debt to client
+                abs($initialBalance),
+                'Initial balance',
+                date('Y-m-d H:i:s')
+            );
+
+
+            $this->transactionService->addTransaction($transactionDto);
+        }
     }
 
     public function getClient(int $id): ?Client

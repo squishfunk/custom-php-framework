@@ -36,7 +36,6 @@ class TransactionService
 
         $this->transactionRepository->save($transaction);
 
-        // Update Client Balance
         $currentBalance = $client->getBalance();
         if ($dto->type === 'expense') {
             $client->setBalance($currentBalance - $dto->amount);
