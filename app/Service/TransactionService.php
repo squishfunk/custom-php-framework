@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Transaction;
+use App\Exception\ClientNotFoundException;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
 use App\Dto\TransactionDto;
@@ -23,7 +24,7 @@ class TransactionService
         $client = $this->clientRepository->find($dto->clientId);
 
         if (!$client) {
-            throw new \Exception("Client not found"); // TODO Should use custom exception
+            throw new ClientNotFoundException();
         }
 
         $transaction = Transaction::create(

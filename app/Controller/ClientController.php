@@ -6,8 +6,10 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Dto\ClientDto;
+use App\Exception\ClientNotFoundException;
 use App\Service\ClientService;
 use App\Service\TransactionService;
+use App\Core\Exception\HttpException;
 
 class ClientController extends Controller
 {
@@ -51,17 +53,21 @@ class ClientController extends Controller
             $request->input('balance') !== null ? (float) $request->input('balance') : null
         );
 
-        $this->clientService->updateClient((int) $id, $dto);
+        try {
+            $this->clientService->updateClient((int) $id, $dto);
+        } catch (ClientNotFoundException $e) {
+            throw new HttpException($e->getMessage(), 404);
+        }
 
-        return new Response('Client updated');
+        $this->redirect('/');
     }
 
     public function show(Request $request, string $id)
     {
-        $client = $this->clientService->getClient((int) $id);
-
-        if (!$client) {
-            return new Response('Client not found', 404);
+        try {
+            $client = $this->clientService->getClient((int) $id);
+        } catch (ClientNotFoundException $e) {
+            throw new HttpException($e->getMessage(), 404);
         }
 
         $transactions = $this->transactionService->getClientTransactions((int) $id);

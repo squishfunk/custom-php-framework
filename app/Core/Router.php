@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-use App\Core\Exception\RouteNotFoundException;
+use App\Core\Exception\HttpException;
 
 /**
  * Simple router for handling HTTP routes
@@ -68,16 +68,14 @@ class Router
             }
         }
 
-        // Check for 404 first
         if (!isset($this->routes[$method])) {
-            throw new RouteNotFoundException($path);
+            throw new HttpException($path, 404);
         }
 
         $matchedHandler = null;
         $matchedMiddlewares = [];
         $params = [];
 
-        // We can safely remove the ?? [] check now because we returned early above if the method key didn't exist
         foreach ($this->routes[$method] as $routePath => $routeConfig) {
             $pattern = preg_quote($routePath, '#');
             $pattern = preg_replace('/\\\{([a-zA-Z0-9_]+)\\\}/', '([^/]+)', $pattern);
@@ -93,10 +91,9 @@ class Router
         }
 
         if (!$matchedHandler) {
-            throw new RouteNotFoundException($path);
+            throw new HttpException($path, 404);
         }
 
-        // Execute Route Specific Middleware
         foreach ($matchedMiddlewares as $middleware) {
             $response = $middleware($request);
             if ($response instanceof Response) {

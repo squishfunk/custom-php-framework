@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Admin;
+use App\Exception\AdminAlreadyExistsException;
+use App\Exception\InvalidCredentialsException;
 use App\Repository\AdminRepository;
 
 class AuthService
@@ -19,7 +21,7 @@ class AuthService
         $admin = $this->adminRepository->findByEmail($email);
 
         if (!$admin) {
-            throw new \Exception("Invalid email or password");
+            throw new InvalidCredentialsException();
         }
 
         if ($admin->verifyPassword($password)) {
@@ -31,7 +33,7 @@ class AuthService
             return true;
         }
 
-        throw new \Exception("Invalid email or password");
+        throw new InvalidCredentialsException();
     }
 
     public function logout(): void
@@ -45,10 +47,15 @@ class AuthService
     public function registerAdmin(string $email, string $password): void
     {
         if ($this->adminRepository->findByEmail($email)) {
-            throw new \RuntimeException("Admin already exists");
+            throw new AdminAlreadyExistsException();
         }
 
         $admin = Admin::create($email, $password);
         $this->adminRepository->save($admin);
+    }
+
+    public function isLoggedIn(): bool
+    {
+        return isset($_SESSION['admin_id']);
     }
 }

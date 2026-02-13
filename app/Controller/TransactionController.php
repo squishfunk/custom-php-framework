@@ -8,6 +8,8 @@ use App\Core\Response;
 use App\Service\ClientService;
 use App\Service\TransactionService;
 use App\Dto\TransactionDto;
+use App\Core\Exception\HttpException;
+use App\Exception\ClientNotFoundException;
 
 class TransactionController extends Controller
 {
@@ -28,9 +30,10 @@ class TransactionController extends Controller
             return new Response('Client ID missing', 400);
         }
 
-        $client = $this->clientService->getClient((int) $clientId);
-        if (!$client) {
-            return new Response('Client not found', 404);
+        try {
+            $client = $this->clientService->getClient((int) $clientId);
+        } catch (ClientNotFoundException $e) {
+            throw new HttpException($e->getMessage(), 404);
         }
 
         return $this->render('transaction/create.html.twig', [
@@ -61,6 +64,8 @@ class TransactionController extends Controller
         try {
             $this->transactionService->addTransaction($dto);
             $this->redirect('/clients/' . $clientId);
+        } catch (ClientNotFoundException $e) {
+            throw new HttpException($e->getMessage(), 404);
         } catch (\Exception $e) {
             return new Response('Error: ' . $e->getMessage());
         }

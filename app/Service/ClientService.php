@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dto\ClientDto;
 use App\Dto\TransactionDto;
 use App\Entity\Client;
+use App\Exception\ClientNotFoundException;
 use App\Repository\ClientRepository;
 
 class ClientService
@@ -56,7 +57,7 @@ class ClientService
         $client = $this->clientRepository->find($id);
 
         if (!$client) {
-            throw new \RuntimeException("Client with id $id not found");
+            throw new ClientNotFoundException("Client with id $id not found");
         }
 
         if ($dto->name !== null) {

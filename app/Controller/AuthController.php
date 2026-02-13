@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
+use App\Exception\AdminAlreadyExistsException;
+use App\Exception\InvalidCredentialsException;
 use App\Service\AuthService;
 
 class AuthController extends Controller
@@ -18,6 +20,10 @@ class AuthController extends Controller
 
     public function showLogin(): Response
     {
+        if ($this->authService->isLoggedIn()) {
+            $this->redirect('/');
+        }
+
         return $this->render('auth/login.html.twig');
     }
 
@@ -30,18 +36,23 @@ class AuthController extends Controller
 
 
 
-        if ($this->authService->login($data['email'], $data['password'])) {
-            $this->redirect('/login');
+        try {
+            if ($this->authService->login($data['email'], $data['password'])) {
+                $this->redirect('/');
+            }
+        } catch (InvalidCredentialsException $e) {
+            return $this->render('auth/login.html.twig', [
+                'error' => 'Invalid credentials',
+                'old' => ['email' => $data['email']]
+            ], 401);
         }
-
-        return $this->render('auth/login.html.twig', [
-            'error' => 'Invalid credentials',
-            'old' => ['email' => $data['email']]
-        ], 401);
     }
 
     public function showRegister(): Response
     {
+        if ($this->authService->isLoggedIn()) {
+            $this->redirect('/');
+        }
         return $this->render('auth/register.html.twig');
     }
 
@@ -55,9 +66,15 @@ class AuthController extends Controller
         try {
             $this->authService->registerAdmin($data['email'], $data['password']);
             $this->redirect('/login');
-        } catch (\Exception $e) {
+        } catch (AdminAlreadyExistsException $e) {
+            // TODO: use exception handler
             return $this->render('auth/register.html.twig', [
                 'error' => $e->getMessage(),
+                'old' => $data
+            ], 400);
+        } catch (\Exception $e) {
+            return $this->render('auth/register.html.twig', [
+                'error' => 'Registration failed',
                 'old' => $data
             ], 400);
         }

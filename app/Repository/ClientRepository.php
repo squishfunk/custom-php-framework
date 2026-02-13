@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Core\Database;
 use App\Entity\Client;
+use App\Exception\ClientNotFoundException;
 use PDO;
 
 class ClientRepository
@@ -37,14 +38,14 @@ class ClientRepository
         return $users;
     }
 
-    public function find(int $id): ?Client
+    public function find(int $id): Client
     {
         $stmt = $this->db->prepare('SELECT * FROM clients WHERE id = :id');
         $stmt->execute(['id' => $id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$data) {
-            throw new \RuntimeException("Client with id $id not found");
+            throw new ClientNotFoundException("Client with id $id not found");
         }
 
         return new Client(
