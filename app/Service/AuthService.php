@@ -11,9 +11,9 @@ class AuthService
 {
     private AdminRepository $adminRepository;
 
-    public function __construct()
+    public function __construct(AdminRepository $adminRepository = null)
     {
-        $this->adminRepository = new AdminRepository();
+        $this->adminRepository = $adminRepository ?? new AdminRepository();
     }
 
     public function login(string $email, string $password): bool

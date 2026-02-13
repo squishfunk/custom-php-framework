@@ -13,10 +13,12 @@ class ClientService
     private ClientRepository $clientRepository;
     private TransactionService $transactionService;
 
-    public function __construct()
-    {
-        $this->clientRepository = new ClientRepository();
-        $this->transactionService = new TransactionService();
+    public function __construct(
+        ClientRepository $clientRepository = null,
+        TransactionService $transactionService = null
+    ) {
+        $this->clientRepository = $clientRepository ?? new ClientRepository();
+        $this->transactionService = $transactionService ?? new TransactionService();
     }
 
     public function createClient(ClientDto $dto): void

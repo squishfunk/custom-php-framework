@@ -16,10 +16,12 @@ class TransactionService
     private TransactionRepository $transactionRepository;
     private ClientRepository $clientRepository;
 
-    public function __construct()
-    {
-        $this->transactionRepository = new TransactionRepository();
-        $this->clientRepository = new ClientRepository();
+    public function __construct(
+        TransactionRepository $transactionRepository = null,
+        ClientRepository $clientRepository = null
+    ) {
+        $this->transactionRepository = $transactionRepository ?? new TransactionRepository();
+        $this->clientRepository = $clientRepository ?? new ClientRepository();
     }
 
     public function getBalanceHistory(int $clientId): array
