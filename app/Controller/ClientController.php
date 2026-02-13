@@ -10,6 +10,7 @@ use App\Exception\ClientNotFoundException;
 use App\Service\ClientService;
 use App\Service\TransactionService;
 use App\Core\Exception\HttpException;
+use App\Exception\ClientAlreadyExistsException;
 
 class ClientController extends Controller
 {
@@ -36,8 +37,15 @@ class ClientController extends Controller
             (float) ($data['balance'] ?? 0)
         );
 
-        $this->clientService->createClient($dto);
-        $this->redirect('/');
+        try {
+            $this->clientService->createClient($dto);
+            $this->redirect('/');
+        } catch (ClientAlreadyExistsException $e) {
+            return $this->render('client/create.html.twig', [
+                'error' => $e->getMessage(),
+                'old' => $data
+            ], 400);
+        }
     }
 
     public function create()
@@ -78,6 +86,11 @@ class ClientController extends Controller
 
         $transactions = $this->transactionService->getClientTransactions((int) $id);
         $balanceHistory = $this->transactionService->getBalanceHistory((int) $id);
+
+        echo '<pre>';
+        print_r($balanceHistory);
+        echo '</pre>';
+        die;
 
         return $this->render('client/show.html.twig', [
             'client' => $client,

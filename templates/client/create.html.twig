@@ -4,6 +4,13 @@
 
 {% block body %}
     <h1 class="mb-4">Create Client</h1>
+    
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% endif %}
+
     <form method="POST" action="/clients">
         {{ csrf_field() }}
         <div class="mb-3">

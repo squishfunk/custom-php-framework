@@ -63,11 +63,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-		    const historyData = {
-		        {
-		            balanceHistory | json_encode | raw
-		        }
-		    };
+		    const historyData = {{balanceHistory | json_encode | raw}};
 
 		    new Chart(document.getElementById('balanceHistoryChart'), {
 		        type: 'line',

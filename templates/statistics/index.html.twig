@@ -40,70 +40,62 @@
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-	    const balanceData = {
-	        {
-	            topBalance | json_encode | raw
-	        }
-	    };
-	    const volumeData = {
-	        {
-	            topVolume | json_encode | raw
-	        }
-	    };
+            const balanceData = {{topBalance | json_encode | raw}};
+            const volumeData = {{topVolume | json_encode | raw}};
 
-	    new Chart(document.getElementById('balanceChart'), {
-	        type: 'bar',
-	        data: {
-	            labels: balanceData.map(c => c.name),
-	            datasets: [{
-	                label: 'Balance',
-	                data: balanceData.map(c => c.balance),
-	                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-	                borderColor: 'rgba(54, 162, 235, 1)',
-	                borderWidth: 1
-	            }]
-	        },
-	        options: {
-	            responsive: true,
-	            plugins: {
-	                legend: {
-	                    display: false
-	                }
-	            },
-	            scales: {
-	                y: {
-	                    beginAtZero: true
-	                }
-	            }
-	        }
-	    });
+            new Chart(document.getElementById('balanceChart'), {
+                type: 'bar',
+                data: {
+                    labels: balanceData.map(c => c.name),
+                    datasets: [{
+                        label: 'Balance',
+                        data: balanceData.map(c => c.balance),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
 
-	    new Chart(document.getElementById('volumeChart'), {
-	        type: 'bar',
-	        data: {
-	            labels: volumeData.map(c => c.name),
-	            datasets: [{
-	                label: 'Total Volume',
-	                data: volumeData.map(c => c.volume),
-	                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-	                borderColor: 'rgba(75, 192, 192, 1)',
-	                borderWidth: 1
-	            }]
-	        },
-	        options: {
-	            responsive: true,
-	            plugins: {
-	                legend: {
-	                    display: false
-	                }
-	            },
-	            scales: {
-	                y: {
-	                    beginAtZero: true
-	                }
-	            }
-	        }
+            new Chart(document.getElementById('volumeChart'), {
+                type: 'bar',
+                data: {
+                    labels: volumeData.map(c => c.name),
+                    datasets: [{
+                        label: 'Total Volume',
+                        data: volumeData.map(c => c.volume),
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
 	    });
-	});
 	</script>
 {% endblock %}

@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dto\ClientDto;
 use App\Dto\TransactionDto;
 use App\Entity\Client;
+use App\Exception\ClientAlreadyExistsException;
 use App\Exception\ClientNotFoundException;
 use App\Repository\ClientRepository;
 
@@ -23,6 +24,10 @@ class ClientService
 
     public function createClient(ClientDto $dto): void
     {
+        if ($this->clientRepository->findByEmail($dto->email)) {
+            throw new ClientAlreadyExistsException();
+        }
+
         $initialBalance = $dto->balance;
         $client = Client::create($dto->name, $dto->email, 0.0);
         $this->clientRepository->save($client);
