@@ -12,10 +12,14 @@ class ExceptionHandler
     public function handle(Throwable $e): Response
     {
         if ($e instanceof RouteNotFoundException) {
-            return new Response(
-                "404 Not Found: " . $e->getMessage(),
-                404
-            );
+            try {
+                $content = View::render('error/404.html.twig', [
+                    'message' => $e->getMessage()
+                ]);
+                return new Response($content, 404);
+            } catch (Throwable $twigError) {
+                return new Response("404 Not Found: " . $e->getMessage(), 404);
+            }
         }
 
         return new Response(

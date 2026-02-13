@@ -21,7 +21,6 @@ class TransactionController extends Controller
 
     public function create()
     {
-        // TODO not a good practice to use $_GET
         $clientId = $_GET['client_id'] ?? null;
 
         if (!$clientId) {
@@ -49,7 +48,7 @@ class TransactionController extends Controller
 
         try {
             $this->transactionService->addTransaction($clientId, $type, $amount, $description, $date);
-            $this->redirect('/client/' . $clientId);
+            $this->redirect('/clients/' . $clientId);
         } catch (\Exception $e) {
             return new Response('Error: ' . $e->getMessage());
         }

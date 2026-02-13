@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1 class="mb-4">Add Transaction for {{ client_name }}</h1>
-    <form method="POST" action="/transaction">
+    <form method="POST" action="/transactions">
         <input type="hidden" name="client_id" value="{{ client_id }}">
         
         <div class="mb-3">

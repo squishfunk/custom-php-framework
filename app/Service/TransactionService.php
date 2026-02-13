@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Transaction;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
+use App\Dto\TransactionDto;
 
 class TransactionService
 {
@@ -17,24 +18,30 @@ class TransactionService
         $this->clientRepository = new ClientRepository();
     }
 
-    // TODO DTO
-    public function addTransaction(int $clientId, string $type, float $amount, ?string $description, string $date): void
+    public function addTransaction(TransactionDto $dto): void
     {
-        $client = $this->clientRepository->find($clientId);
+        $client = $this->clientRepository->find($dto->clientId);
 
         if (!$client) {
-            throw new \RuntimeException("Client not found");
+            throw new \Exception("Client not found"); // TODO Should use custom exception
         }
 
-        $transaction = Transaction::create($clientId, $type, $amount, $description, $date);
+        $transaction = Transaction::create(
+            $dto->clientId,
+            $dto->type,
+            $dto->amount,
+            $dto->description,
+            $dto->date
+        );
+
         $this->transactionRepository->save($transaction);
 
         // Update Client Balance
         $currentBalance = $client->getBalance();
-        if ($type === 'expense') {
-            $client->setBalance($currentBalance - $amount);
+        if ($dto->type === 'expense') {
+            $client->setBalance($currentBalance - $dto->amount);
         } else {
-            $client->setBalance($currentBalance + $amount);
+            $client->setBalance($currentBalance + $dto->amount);
         }
         $this->clientRepository->update($client);
     }
