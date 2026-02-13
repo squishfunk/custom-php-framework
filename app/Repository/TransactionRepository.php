@@ -50,4 +50,19 @@ class TransactionRepository
 
         return $transactions;
     }
+    public function findTopClientsByVolume(int $limit): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT t.client_id, c.name, SUM(t.amount) as volume 
+             FROM transactions t 
+             JOIN clients c ON t.client_id = c.id 
+             GROUP BY t.client_id 
+             ORDER BY volume DESC 
+             LIMIT :limit'
+        );
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

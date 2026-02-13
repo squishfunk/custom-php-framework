@@ -20,6 +20,10 @@ class View
                 'cache' => false,
                 'debug' => true,
             ]);
+            self::$twig->addGlobal('user', isset($_SESSION['admin_id']) ? [
+                'id' => $_SESSION['admin_id'],
+                'email' => $_SESSION['admin_email'] ?? '',
+            ] : null);
 
             self::$twig->addFunction(new TwigFunction('csrf_token', function () {
                 return CsrfToken::getToken();

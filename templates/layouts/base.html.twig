@@ -1,55 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ThinkHuge App{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/">ThinkHuge App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    {% if session.admin_id is defined %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Clients</a>
-                        </li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav">
-                    {% if session.admin_id is defined %}
-                        <li class="nav-item">
-                            <span class="nav-link text-light">Logged in as {{ session.admin_email }}</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-outline-light btn-sm ms-2" href="/logout">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">Login</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			{% block title %}ThinkHuge App
+			{% endblock %}
+		</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+			<div class="container">
+				<a class="navbar-brand" href="/">ThinkHuge App</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav me-auto">
+						{% if user %}
+							<li class="nav-item">
+								<a class="nav-link" href="/">Clients</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/statistics">Statistics</a>
+							</li>
+						{% endif %}
+					</ul>
+					<ul class="navbar-nav">
+						{% if user %}
+							<li class="nav-item">
+								<span class="nav-link text-light">Logged in as
+									{{ user.email }}</span>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link btn btn-outline-light btn-sm ms-2" href="/logout">Logout</a>
+							</li>
+						{% else %}
+							<li class="nav-item">
+								<a class="nav-link" href="/login">Login</a>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</nav>
 
-    <div class="container">
-        {% if error is defined %}
-            <div class="alert alert-danger">{{ error }}</div>
-        {% endif %}
-        {% if success is defined %}
-            <div class="alert alert-success">{{ success }}</div>
-        {% endif %}
+		<div class="container">
+			{% if error is defined %}
+				<div class="alert alert-danger">{{ error }}</div>
+			{% endif %}
+			{% if success is defined %}
+				<div class="alert alert-success">{{ success }}</div>
+			{% endif %}
 
-        {% block body %}{% endblock %}
-    </div>
+			{% block body %}{% endblock %}
+		</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	</body>
 </html>

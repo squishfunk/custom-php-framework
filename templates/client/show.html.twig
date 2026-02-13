@@ -1,47 +1,95 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}Client Details - ThinkHuge App{% endblock %}
+{% block title %}Client Details - ThinkHuge App
+{% endblock %}
 
 {% block body %}
-    <div class="mb-4">
-        <h1>Client: {{ client.name }}</h1>
-        <p><strong>Email:</strong> {{ client.email }}</p>
-        <p><strong>Balance:</strong> {{ client.balance }}</p>
-        <div>
-            <a href="/transactions/create?client_id={{ client.id }}" class="btn btn-success">Add Transaction</a>
-            <a href="/" class="btn btn-secondary ms-2">Back to List</a>
-        </div>
-    </div>
+	<div class="mb-4">
+		<h1>Client:
+			{{ client.name }}</h1>
+		<p>
+			<strong>Email:</strong>
+			{{ client.email }}</p>
+		<p>
+			<strong>Balance:</strong>
+			{{ client.balance }}</p>
+		<div>
+			<a href="/transactions/create?client_id={{ client.id }}" class="btn btn-success">Add Transaction</a>
+			<a href="/" class="btn btn-secondary ms-2">Back to List</a>
+		</div>
+	</div>
 
-    <h2>Transactions</h2>
-    <table class="table table-striped mt-3">
-        <thead class="table-dark">
-            <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for tx in transactions %}
-            <tr>
-                <td>{{ tx.date }}</td>
-                <td>
-                    {% if tx.type == 'earning' %}
-                        <span class="badge bg-success">Earning</span>
-                    {% else %}
-                        <span class="badge bg-danger">Expense</span>
-                    {% endif %}
-                </td>
-                <td>{{ tx.amount }}</td>
-                <td>{{ tx.description }}</td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="4" class="text-center">No transactions recorded.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+	<h2>Transactions</h2>
+	<table class="table table-striped mt-3">
+		<thead class="table-dark">
+			<tr>
+				<th>Date</th>
+				<th>Type</th>
+				<th>Amount</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for tx in transactions %}
+				<tr>
+					<td>{{ tx.date }}</td>
+					<td>
+						{% if tx.type == 'earning' %}
+							<span class="badge bg-success">Earning</span>
+						{% else %}
+							<span class="badge bg-danger">Expense</span>
+						{% endif %}
+					</td>
+					<td>{{ tx.amount }}</td>
+					<td>{{ tx.description }}</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="4" class="text-center">No transactions recorded.</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<div class="card shadow-sm mt-5 mb-5">
+		<div class="card-header">
+			<h5 class="mb-0">Balance History</h5>
+		</div>
+		<div class="card-body">
+			<canvas id="balanceHistoryChart"></canvas>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+		    const historyData = {
+		        {
+		            balanceHistory | json_encode | raw
+		        }
+		    };
+
+		    new Chart(document.getElementById('balanceHistoryChart'), {
+		        type: 'line',
+		        data: {
+		            labels: historyData.map(h => h.date),
+		            datasets: [{
+		                label: 'Balance Over Time',
+		                data: historyData.map(h => h.balance),
+		                fill: false,
+		                borderColor: 'rgb(75, 192, 192)',
+		                tension: 0.1
+		            }]
+		        },
+		        options: {
+		            responsive: true,
+		            scales: {
+		                y: {
+		                    beginAtZero: true
+		                }
+		            }
+		        }
+		    });
+		});
+	</script>
 {% endblock %}

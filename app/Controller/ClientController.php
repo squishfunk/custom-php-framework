@@ -77,10 +77,12 @@ class ClientController extends Controller
         }
 
         $transactions = $this->transactionService->getClientTransactions((int) $id);
+        $balanceHistory = $this->transactionService->getBalanceHistory((int) $id);
 
         return $this->render('client/show.html.twig', [
             'client' => $client,
-            'transactions' => $transactions
+            'transactions' => $transactions,
+            'balanceHistory' => $balanceHistory
         ]);
     }
 

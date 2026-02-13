@@ -6,6 +6,7 @@ use App\Middleware\CsrfMiddleware;
 use App\Controller\ClientController;
 use App\Controller\AuthController;
 use App\Controller\TransactionController;
+use App\Controller\StatisticsController;
 
 /** @var Router $router */
 
@@ -22,6 +23,10 @@ $router->get('/logout', [AuthController::class, 'logout'])
     ->addMiddleware(new \App\Middleware\AuthMiddleware());
 
 $router->get('/', [ClientController::class, 'index'])
+    ->addMiddleware(new \App\Middleware\AuthMiddleware());
+
+// Statistics
+$router->get('/statistics', [StatisticsController::class, 'index'])
     ->addMiddleware(new \App\Middleware\AuthMiddleware());
 
 // Client

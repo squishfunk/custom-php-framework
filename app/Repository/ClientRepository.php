@@ -38,6 +38,27 @@ class ClientRepository
         return $users;
     }
 
+    public function findTopByBalance(int $limit): array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM clients ORDER BY balance DESC LIMIT :limit');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $clients = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $clients[] = new Client(
+                $row['id'],
+                $row['name'],
+                $row['email'],
+                (float) $row['balance'],
+                $row['created_at'],
+                $row['updated_at']
+            );
+        }
+
+        return $clients;
+    }
+
     public function find(int $id): Client
     {
         $stmt = $this->db->prepare('SELECT * FROM clients WHERE id = :id');

@@ -22,6 +22,50 @@ class TransactionService
         $this->clientRepository = new ClientRepository();
     }
 
+    public function getBalanceHistory(int $clientId): array
+    {
+        $client = $this->clientRepository->find($clientId);
+        if (!$client) {
+            throw new ClientNotFoundException();
+        }
+
+        $transactions = $this->transactionRepository->findByClientId($clientId);
+        $currentBalance = $client->getBalance();
+
+        $history = [];
+
+        $history[] = [
+            'date' => date('Y-m-d H:i:s'),
+            'balance' => $currentBalance
+        ];
+
+        $balance = $currentBalance;
+
+        foreach ($transactions as $transaction) {
+            $amount = $transaction->getAmount();
+            $type = $transaction->getType();
+
+            if ($type === 'earning') {
+                $balance -= $amount;
+            } else {
+                $balance += $amount;
+            }
+
+            $history[] = [
+                'date' => $transaction->getDate(),
+                'balance' => $balance
+            ];
+        }
+
+        // Return chronologically (oldest to newest)
+        return array_reverse($history);
+    }
+
+    public function getTopClientsByVolume(int $limit): array
+    {
+        return $this->transactionRepository->findTopClientsByVolume($limit);
+    }
+
     public function addTransaction(TransactionDto $dto): void
     {
         $client = $this->clientRepository->find($dto->clientId);
