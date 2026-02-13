@@ -77,6 +77,11 @@ class ClientService
 
     public function deleteClient(int $id): void
     {
+        $client = $this->clientRepository->find($id);
+        if (!$client) {
+            throw new ClientNotFoundException("Client with id $id not found");
+        }
+        
         $this->clientRepository->delete($id);
     }
 }

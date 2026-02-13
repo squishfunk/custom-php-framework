@@ -2,6 +2,7 @@
 
 use App\Core\Router;
 use App\Middleware\SessionMiddleware;
+use App\Middleware\CsrfMiddleware;
 use App\Controller\ClientController;
 use App\Controller\AuthController;
 use App\Controller\TransactionController;
@@ -9,6 +10,7 @@ use App\Controller\TransactionController;
 /** @var Router $router */
 
 $router->use(new SessionMiddleware());
+$router->use(new CsrfMiddleware());
 
 // Auth
 $router->get('/login', [AuthController::class, 'showLogin']);

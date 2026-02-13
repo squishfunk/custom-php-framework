@@ -2,11 +2,14 @@
 
 namespace App\Service;
 
+use App\Core\Database;
 use App\Entity\Transaction;
 use App\Exception\ClientNotFoundException;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
 use App\Dto\TransactionDto;
+use PDOException;
+use Exception;
 
 class TransactionService
 {
@@ -27,23 +30,38 @@ class TransactionService
             throw new ClientNotFoundException();
         }
 
-        $transaction = Transaction::create(
-            $dto->clientId,
-            $dto->type,
-            $dto->amount,
-            $dto->description,
-            $dto->date
-        );
-
-        $this->transactionRepository->save($transaction);
-
         $currentBalance = $client->getBalance();
-        if ($dto->type === 'expense') {
-            $client->setBalance($currentBalance - $dto->amount);
-        } else {
-            $client->setBalance($currentBalance + $dto->amount);
+        $newBalance = $this->calculateNewBalance($currentBalance, $dto->type, $dto->amount);
+
+        Database::beginTransaction();
+
+        try {
+            $transaction = Transaction::create(
+                $dto->clientId,
+                $dto->type,
+                $dto->amount,
+                $dto->description,
+                $dto->date
+            );
+            $this->transactionRepository->save($transaction);
+
+            $client->setBalance($newBalance);
+            $this->clientRepository->update($client);
+
+            Database::commit();
+        } catch (PDOException $e) {
+            Database::rollBack();
+            throw new Exception('Failed to process transaction: ' . $e->getMessage());
         }
-        $this->clientRepository->update($client);
+    }
+
+    private function calculateNewBalance(float $currentBalance, string $type, float $amount): float
+    {
+        return match ($type) {
+            'expense' => $currentBalance - $amount,
+            'earning' => $currentBalance + $amount,
+            default => throw new Exception('Invalid transaction type: ' . $type),
+        };
     }
 
     public function getClientTransactions(int $clientId): array

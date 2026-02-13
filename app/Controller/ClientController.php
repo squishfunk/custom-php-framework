@@ -47,10 +47,16 @@ class ClientController extends Controller
 
     public function update(Request $request, string $id)
     {
+        $data = $this->validate($request, [
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'balance' => 'numeric'
+        ]);
+
         $dto = new ClientDto(
-            $request->input('name'),
-            $request->input('email'),
-            $request->input('balance') !== null ? (float) $request->input('balance') : null
+            $data['name'],
+            $data['email'],
+            isset($data['balance']) ? (float) $data['balance'] : null
         );
 
         try {
@@ -80,7 +86,11 @@ class ClientController extends Controller
 
     public function delete(Request $request, string $id)
     {
-        $this->clientService->deleteClient((int) $id);
+        try {
+            $this->clientService->deleteClient((int) $id);
+        } catch (ClientNotFoundException $e) {
+            throw new HttpException($e->getMessage(), 404);
+        }
         $this->redirect('/');
     }
 

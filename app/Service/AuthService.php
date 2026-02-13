@@ -28,6 +28,9 @@ class AuthService
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
+            
+            session_regenerate_id(true);
+            
             $_SESSION['admin_id'] = $admin->getId();
             $_SESSION['admin_email'] = $admin->getEmail();
             return true;

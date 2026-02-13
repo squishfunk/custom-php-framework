@@ -6,6 +6,7 @@ namespace App\Core;
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 class View
 {
@@ -19,7 +20,15 @@ class View
                 'cache' => false,
                 'debug' => true,
             ]);
-            self::$twig->addGlobal('session', $_SESSION ?? []);
+
+            self::$twig->addFunction(new TwigFunction('csrf_token', function () {
+                return CsrfToken::getToken();
+            }));
+
+            self::$twig->addFunction(new TwigFunction('csrf_field', function () {
+                $token = CsrfToken::getToken();
+                return '<input type="hidden" name="_token" value="' . htmlspecialchars($token, ENT_QUOTES, 'UTF-8') . '">';
+            }, ['is_safe' => ['html']]));
         }
 
         return self::$twig;

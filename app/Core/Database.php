@@ -53,6 +53,25 @@ class Database
         return self::$instance;
     }
 
+    public static function beginTransaction(): bool
+    {
+        return self::getConnection()->beginTransaction();
+    }
+
+    public static function commit(): bool
+    {
+        return self::getConnection()->commit();
+    }
+    public static function rollBack(): bool
+    {
+        return self::getConnection()->rollBack();
+    }
+
+    public static function inTransaction(): bool
+    {
+        return self::getConnection()->inTransaction();
+    }
+
     private function __clone()
     {
     }

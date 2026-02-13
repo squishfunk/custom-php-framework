@@ -67,7 +67,6 @@ class AuthController extends Controller
             $this->authService->registerAdmin($data['email'], $data['password']);
             $this->redirect('/login');
         } catch (AdminAlreadyExistsException $e) {
-            // TODO: use exception handler
             return $this->render('auth/register.html.twig', [
                 'error' => $e->getMessage(),
                 'old' => $data

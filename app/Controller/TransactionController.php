@@ -47,7 +47,7 @@ class TransactionController extends Controller
         $clientId = $request->input('client_id');
 
         $data = $this->validate($request, [
-            'type' => 'required|in:deposit,earning,expense',
+            'type' => 'required|in:earning,expense',
             'amount' => 'required|numeric',
             'description' => 'max:255',
             'date' => 'required|date'
