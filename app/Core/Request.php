@@ -88,4 +88,9 @@ class Request
     {
         return isset($this->post[$key]) ? $this->post[$key] : null;
     }
+
+    public function all(): array
+    {
+        return $this->post;
+    }
 }

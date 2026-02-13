@@ -1,21 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Middleware;
 
 use App\Core\Request;
 use App\Core\Response;
 
-class AuthMiddleware
+class SessionMiddleware
 {
     public function __invoke(Request $request): ?Response
     {
-
-
-        if (!isset($_SESSION['admin_id'])) {
-            header('Location: /login');
-            exit;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
-
         return null;
     }
 }

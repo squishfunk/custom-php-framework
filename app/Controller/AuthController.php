@@ -23,15 +23,20 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $email = $request->input('email');
-        $password = $request->input('password');
+        $data = $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
-        if ($this->authService->login($email, $password)) {
-            $this->redirect('/');
+
+
+        if ($this->authService->login($data['email'], $data['password'])) {
+            $this->redirect('/login');
         }
 
         return $this->render('auth/login.html.twig', [
-            'error' => 'Invalid credentials'
+            'error' => 'Invalid credentials',
+            'old' => ['email' => $data['email']]
         ], 401);
     }
 
@@ -42,15 +47,18 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $email = $request->input('email');
-        $password = $request->input('password');
+        $data = $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required|min:6'
+        ]);
 
         try {
-            $this->authService->registerAdmin($email, $password);
-            $this->redirect('/login?registered=1');
+            $this->authService->registerAdmin($data['email'], $data['password']);
+            $this->redirect('/login');
         } catch (\Exception $e) {
             return $this->render('auth/register.html.twig', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'old' => $data
             ], 400);
         }
     }

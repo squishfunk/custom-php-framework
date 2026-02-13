@@ -19,7 +19,7 @@ class AuthService
         $admin = $this->adminRepository->findByEmail($email);
 
         if (!$admin) {
-            return false;
+            throw new \Exception("Invalid email or password");
         }
 
         if ($admin->verifyPassword($password)) {
@@ -31,7 +31,7 @@ class AuthService
             return true;
         }
 
-        return false;
+        throw new \Exception("Invalid email or password");
     }
 
     public function logout(): void

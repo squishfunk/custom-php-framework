@@ -1,11 +1,14 @@
 <?php
 
 use App\Core\Router;
+use App\Middleware\SessionMiddleware;
 use App\Controller\ClientController;
 use App\Controller\AuthController;
 use App\Controller\TransactionController;
 
 /** @var Router $router */
+
+$router->use(new SessionMiddleware());
 
 // Auth
 $router->get('/login', [AuthController::class, 'showLogin']);

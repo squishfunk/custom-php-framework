@@ -9,11 +9,17 @@
             <form method="POST" action="/login">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+                    <input type="email" class="form-control {{ errors.email ? 'is-invalid' : '' }}" id="email" name="email" required value="{{ old.email }}">
+                    {% if errors.email %}
+                        <div class="invalid-feedback">{{ errors.email[0] }}</div>
+                    {% endif %}
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    <input type="password" class="form-control {{ errors.password ? 'is-invalid' : '' }}" id="password" name="password" required>
+                    {% if errors.password %}
+                        <div class="invalid-feedback">{{ errors.password[0] }}</div>
+                    {% endif %}
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>

@@ -22,10 +22,16 @@ class ClientController extends Controller
 
     public function store(Request $request)
     {
+        $data = $this->validate($request, [
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'balance' => 'numeric'
+        ]);
+
         $dto = new ClientDto(
-            $request->input("name"),
-            $request->input("email"),
-            (float) $request->input("balance")
+            $data['name'],
+            $data['email'],
+            (float) ($data['balance'] ?? 0)
         );
 
         $this->clientService->createClient($dto);

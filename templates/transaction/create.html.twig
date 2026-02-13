@@ -9,25 +9,37 @@
         
         <div class="mb-3">
             <label for="type" class="form-label">Type</label>
-            <select class="form-select" id="type" name="type">
-                <option value="earning">Earning</option>
-                <option value="expense">Expense</option>
+            <select class="form-select {{ errors.type ? 'is-invalid' : '' }}" id="type" name="type">
+                <option value="earning" {{ old.type == 'earning' ? 'selected' : '' }}>Earning</option>
+                <option value="expense" {{ old.type == 'expense' ? 'selected' : '' }}>Expense</option>
             </select>
+            {% if errors.type %}
+                <div class="invalid-feedback">{{ errors.type[0] }}</div>
+            {% endif %}
         </div>
         
         <div class="mb-3">
             <label for="amount" class="form-label">Amount</label>
-            <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+            <input type="number" step="0.01" class="form-control {{ errors.amount ? 'is-invalid' : '' }}" id="amount" name="amount" required value="{{ old.amount }}">
+            {% if errors.amount %}
+                <div class="invalid-feedback">{{ errors.amount[0] }}</div>
+            {% endif %}
         </div>
         
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <input type="text" class="form-control" id="description" name="description">
+            <input type="text" class="form-control {{ errors.description ? 'is-invalid' : '' }}" id="description" name="description" value="{{ old.description }}">
+            {% if errors.description %}
+                <div class="invalid-feedback">{{ errors.description[0] }}</div>
+            {% endif %}
         </div>
         
         <div class="mb-3">
             <label for="date" class="form-label">Date</label>
-            <input type="date" class="form-control" id="date" name="date" required value="{{ 'now'|date('Y-m-d') }}">
+            <input type="date" class="form-control {{ errors.date ? 'is-invalid' : '' }}" id="date" name="date" required value="{{ old.date|default('now'|date('Y-m-d')) }}">
+            {% if errors.date %}
+                <div class="invalid-feedback">{{ errors.date[0] }}</div>
+            {% endif %}
         </div>
         
         <button type="submit" class="btn btn-primary">Add Transaction</button>

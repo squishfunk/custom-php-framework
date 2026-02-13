@@ -41,18 +41,21 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
-        $clientId = (int) $request->input('client_id');
-        $type = $request->input('type');
-        $amount = (float) $request->input('amount');
-        $description = $request->input('description');
-        $date = $request->input('date');
+        $clientId = $request->input('client_id');
+
+        $data = $this->validate($request, [
+            'type' => 'required|in:deposit,earning,expense',
+            'amount' => 'required|numeric',
+            'description' => 'max:255',
+            'date' => 'required|date'
+        ]);
 
         $dto = new TransactionDto(
-            $clientId,
-            $type,
-            $amount,
-            $description,
-            $date
+            (int) $clientId,
+            $data['type'],
+            (float) $data['amount'],
+            $data['description'] ?? null,
+            $data['date']
         );
 
         try {
