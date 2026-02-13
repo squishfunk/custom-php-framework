@@ -3,10 +3,10 @@
 namespace App\Repository;
 
 use App\Core\Database;
-use App\Entity\User;
+use App\Entity\Client;
 use PDO;
 
-class UserRepository
+class ClientRepository
 {
     private PDO $db;
 
@@ -16,15 +16,15 @@ class UserRepository
     }
 
     /**
-     * @return User[]
+     * @return Client[]
      */
     public function findAll(): array
     {
-        $stmt = $this->db->query('SELECT * FROM users');
+        $stmt = $this->db->query('SELECT * FROM clients');
         $users = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $users[] = new User(
+            $users[] = new Client(
                 (int) $row['id'],
                 $row['name'],
                 $row['email'],
@@ -37,17 +37,17 @@ class UserRepository
         return $users;
     }
 
-    public function find(int $id): ?User
+    public function find(int $id): ?Client
     {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE id = :id');
+        $stmt = $this->db->prepare('SELECT * FROM clients WHERE id = :id');
         $stmt->execute(['id' => $id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$data) {
-            return null;
+            throw new \RuntimeException("Client with id $id not found");
         }
 
-        return new User(
+        return new Client(
             (int) $data['id'],
             $data['name'],
             $data['email'],
@@ -57,35 +57,35 @@ class UserRepository
         );
     }
 
-    public function save(User $user): void
+    public function save(Client $client): void
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO users (name, email, balance) VALUES (:name, :email, :balance)'
+            'INSERT INTO clients (name, email, balance) VALUES (:name, :email, :balance)'
         );
         $stmt->execute([
-            'name' => $user->getName(),
-            'email' => $user->getEmail(),
-            'balance' => $user->getBalance(),
+            'name' => $client->getName(),
+            'email' => $client->getEmail(),
+            'balance' => $client->getBalance(),
         ]);
-        $user->setId((int) $this->db->lastInsertId());
+        $client->setId((int) $this->db->lastInsertId());
     }
 
-    public function update(User $user): void
+    public function update(Client $client): void
     {
         $stmt = $this->db->prepare(
-            'UPDATE users SET name = :name, email = :email, balance = :balance WHERE id = :id'
+            'UPDATE clients SET name = :name, email = :email, balance = :balance WHERE id = :id'
         );
         $stmt->execute([
-            'id' => $user->getId(),
-            'name' => $user->getName(),
-            'email' => $user->getEmail(),
-            'balance' => $user->getBalance(),
+            'id' => $client->getId(),
+            'name' => $client->getName(),
+            'email' => $client->getEmail(),
+            'balance' => $client->getBalance(),
         ]);
     }
 
     public function delete(int $id): void
     {
-        $stmt = $this->db->prepare('DELETE FROM users WHERE id = :id');
+        $stmt = $this->db->prepare('DELETE FROM clients WHERE id = :id');
         $stmt->execute(['id' => $id]);
     }
 }

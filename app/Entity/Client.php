@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-class User
+class Client
 {
     private int $id;
     private string $name;

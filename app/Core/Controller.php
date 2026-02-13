@@ -20,26 +20,22 @@ abstract class Controller
             $loader = new FilesystemLoader(__DIR__ . '/../../templates');
             $this->twig = new Environment($loader, [
                 'cache' => false,
-                'autoescape' => 'html',
                 'debug' => true,
             ]);
+            $this->twig->addGlobal('session', $_SESSION ?? []);
         }
 
         return $this->twig;
     }
 
-    /**
-     * Render a template and return a Response
-     *
-     * @param string $template Template path
-     * @param array $data Data to pass to template
-     * @param int $statusCode HTTP status code
-     * @return Response
-     */
     protected function render(string $template, array $data = [], int $statusCode = 200): Response
     {
-        $content = $this->getTwig()->render($template, $data);
+        return new Response($this->getTwig()->render($template, $data), $statusCode);
+    }
 
-        return new Response($content, $statusCode);
+    protected function redirect(string $url): void
+    {
+        header("Location: $url");
+        exit;
     }
 }

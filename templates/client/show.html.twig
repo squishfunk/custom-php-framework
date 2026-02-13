@@ -1,0 +1,47 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Client Details - ThinkHuge App{% endblock %}
+
+{% block body %}
+    <div class="mb-4">
+        <h1>Client: {{ client.name }}</h1>
+        <p><strong>Email:</strong> {{ client.email }}</p>
+        <p><strong>Balance:</strong> {{ client.balance }}</p>
+        <div>
+            <a href="/transaction/create?client_id={{ client.id }}" class="btn btn-success">Add Transaction</a>
+            <a href="/" class="btn btn-secondary ms-2">Back to List</a>
+        </div>
+    </div>
+
+    <h2>Transactions</h2>
+    <table class="table table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tx in transactions %}
+            <tr>
+                <td>{{ tx.date }}</td>
+                <td>
+                    {% if tx.type == 'earning' %}
+                        <span class="badge bg-success">Earning</span>
+                    {% else %}
+                        <span class="badge bg-danger">Expense</span>
+                    {% endif %}
+                </td>
+                <td>{{ tx.amount }}</td>
+                <td>{{ tx.description }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center">No transactions recorded.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

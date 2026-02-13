@@ -2,7 +2,7 @@
 
 namespace App\Dto;
 
-class UserDto
+class ClientDto
 {
     public function __construct(
         public ?string $name = null,

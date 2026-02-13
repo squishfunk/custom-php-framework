@@ -1,0 +1,36 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Add Transaction - ThinkHuge App{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Add Transaction for {{ client_name }}</h1>
+    <form method="POST" action="/transaction">
+        <input type="hidden" name="client_id" value="{{ client_id }}">
+        
+        <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <select class="form-select" id="type" name="type">
+                <option value="earning">Earning</option>
+                <option value="expense">Expense</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" class="form-control" id="description" name="description">
+        </div>
+        
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date" name="date" required value="{{ 'now'|date('Y-m-d') }}">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add Transaction</button>
+        <a href="/client/{{ client_id }}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+{% endblock %}
