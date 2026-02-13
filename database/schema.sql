@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     type ENUM('expense', 'earning') NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     description VARCHAR(255),
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
 );

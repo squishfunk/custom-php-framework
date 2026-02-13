@@ -37,7 +37,7 @@
         
         <div class="mb-3">
             <label for="date" class="form-label">Date</label>
-            <input type="date" class="form-control {{ errors.date ? 'is-invalid' : '' }}" id="date" name="date" required value="{{ old.date|default('now'|date('Y-m-d')) }}">
+            <input type="datetime-local" class="form-control {{ errors.date ? 'is-invalid' : '' }}" id="date" name="date" required value="{{ old.date|default('now'|date('Y-m-d H:i')) }}">
             {% if errors.date %}
                 <div class="invalid-feedback">{{ errors.date[0] }}</div>
             {% endif %}

@@ -32,7 +32,7 @@ class TransactionRepository
 
     public function findByClientId(int $clientId): array
     {
-        $stmt = $this->db->prepare('SELECT * FROM transactions WHERE client_id = :client_id ORDER BY date DESC');
+        $stmt = $this->db->prepare('SELECT * FROM transactions WHERE client_id = :client_id ORDER BY date DESC, id DESC');
         $stmt->execute(['client_id' => $clientId]);
 
         $transactions = [];
