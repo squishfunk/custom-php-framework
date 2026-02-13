@@ -17,8 +17,8 @@ class TransactionService
     private ClientRepository $clientRepository;
 
     public function __construct(
-        TransactionRepository $transactionRepository = null,
-        ClientRepository $clientRepository = null
+        ?TransactionRepository $transactionRepository = null,
+        ?ClientRepository $clientRepository = null
     ) {
         $this->transactionRepository = $transactionRepository ?? new TransactionRepository();
         $this->clientRepository = $clientRepository ?? new ClientRepository();

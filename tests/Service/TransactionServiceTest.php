@@ -11,8 +11,10 @@ use App\Exception\ClientNotFoundException;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
 use App\Service\TransactionService;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class TransactionServiceTest extends TestCase
 {
     private TransactionService $transactionService;

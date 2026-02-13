@@ -11,7 +11,7 @@ class AuthService
 {
     private AdminRepository $adminRepository;
 
-    public function __construct(AdminRepository $adminRepository = null)
+    public function __construct(?AdminRepository $adminRepository = null)
     {
         $this->adminRepository = $adminRepository ?? new AdminRepository();
     }
@@ -28,9 +28,9 @@ class AuthService
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
-            
+
             session_regenerate_id(true);
-            
+
             $_SESSION['admin_id'] = $admin->getId();
             $_SESSION['admin_email'] = $admin->getEmail();
             return true;

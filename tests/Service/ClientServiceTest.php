@@ -10,8 +10,10 @@ use App\Exception\ClientNotFoundException;
 use App\Repository\ClientRepository;
 use App\Service\ClientService;
 use App\Service\TransactionService;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class ClientServiceTest extends TestCase
 {
     private ClientService $clientService;

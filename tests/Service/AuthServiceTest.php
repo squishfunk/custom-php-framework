@@ -9,8 +9,10 @@ use App\Exception\AdminAlreadyExistsException;
 use App\Exception\InvalidCredentialsException;
 use App\Repository\AdminRepository;
 use App\Service\AuthService;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class AuthServiceTest extends TestCase
 {
     private AuthService $authService;
@@ -80,6 +82,7 @@ class AuthServiceTest extends TestCase
         $this->authService->login('admin@example.com', 'wrong_password');
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLogout(): void
     {
         $_SESSION['admin_id'] = 1;
@@ -125,6 +128,7 @@ class AuthServiceTest extends TestCase
         $this->authService->registerAdmin('existing@example.com', 'password123');
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testIsLoggedInReturnsTrueWhenSessionExists(): void
     {
         $_SESSION['admin_id'] = 1;
@@ -132,11 +136,13 @@ class AuthServiceTest extends TestCase
         $this->assertTrue($this->authService->isLoggedIn());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testIsLoggedInReturnsFalseWhenNoSession(): void
     {
         $this->assertFalse($this->authService->isLoggedIn());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testIsLoggedInReturnsFalseWhenAdminIdNotSet(): void
     {
         $_SESSION['other_key'] = 'value';
