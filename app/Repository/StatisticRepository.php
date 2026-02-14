@@ -49,4 +49,84 @@ class StatisticRepository
         ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getTransactionTypeDistribution(string $dateFrom, string $dateTo): array
+    {
+        $sql = 'SELECT t.type, SUM(t.amount) as total, COUNT(*) as count 
+             FROM transactions t 
+             WHERE t.date >= :date_from AND t.date <= :date_to
+             GROUP BY t.type';
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getDailyTransactionTrend(string $dateFrom, string $dateTo): array
+    {
+        $sql = 'SELECT DATE(t.date) as date, SUM(t.amount) as total, COUNT(*) as count 
+             FROM transactions t 
+             WHERE t.date >= :date_from AND t.date <= :date_to
+             GROUP BY DATE(t.date)
+             ORDER BY date ASC';
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalMarketCap(string $dateFrom, string $dateTo): array
+    {
+        $sql = 'SELECT 
+            day,
+            SUM(daily_net) OVER (ORDER BY day) AS total_company_value
+        FROM (
+            SELECT
+                DATE(t.date) AS day,
+                SUM(
+                    CASE
+                        WHEN t.type = "earning" THEN t.amount
+                        WHEN t.type = "expense" THEN -t.amount
+                    END
+                ) AS daily_net
+            FROM transactions t
+            WHERE t.date >= :date_from AND t.date <= :date_to
+            GROUP BY day
+        ) t
+        ORDER BY day';
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getCapitalDistribution(int $limit): array
+    {
+        $sql = 'SELECT 
+            c.id,
+            c.name,
+            c.balance,
+            ROUND(
+                c.balance / (SELECT SUM(balance) FROM clients) * 100,
+                2
+            ) AS percentage
+        FROM clients c
+        ORDER BY c.balance DESC
+        LIMIT :limit';
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'limit' => $limit,
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

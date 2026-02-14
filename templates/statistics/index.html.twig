@@ -52,6 +52,54 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Transaction Type Distribution -->
+			<div class="col-md-6 mb-4">
+				<div class="card shadow-sm">
+					<div class="card-header">
+						<h5 class="mb-0">Transaction Type Distribution</h5>
+					</div>
+					<div class="card-body">
+						<canvas id="typeDistributionChart"></canvas>
+					</div>
+				</div>
+			</div>
+
+            <!-- Capital Distribution -->
+			<div class="col-md-6 mb-4">
+				<div class="card shadow-sm">
+					<div class="card-header">
+						<h5 class="mb-0">Capital Distribution</h5>
+					</div>
+					<div class="card-body">
+						<canvas id="capitalDistributionChart"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<!-- Daily Transaction Trend -->
+			<div class="col-md-6 mb-4">
+				<div class="card shadow-sm">
+					<div class="card-header">
+						<h5 class="mb-0">Daily Transaction Trend</h5>
+					</div>
+					<div class="card-body">
+						<canvas id="dailyTrendChart"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<!-- Total Market Cap -->
+			<div class="col-md-6 mb-4">
+				<div class="card shadow-sm">
+					<div class="card-header">
+						<h5 class="mb-0">Total Market Cap</h5>
+					</div>
+					<div class="card-body">
+						<canvas id="marketCapChart"></canvas>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -60,7 +108,12 @@
 		document.addEventListener('DOMContentLoaded', function() {
             const balanceData = {{topClientsByBalance | json_encode | raw}};
             const volumeData = {{topClientsByVolume | json_encode | raw}};
+            const typeDistributionData = {{transactionTypeDistribution | json_encode | raw}};
+            const dailyTrendData = {{dailyTransactionTrend | json_encode | raw}};
+            const marketCapData = {{totalMarketCap | json_encode | raw}};
+            const capitalDistributionData = {{capitalDistribution | json_encode | raw}};
 
+            // Top 10 Balance Chart
             new Chart(document.getElementById('balanceChart'), {
                 type: 'bar',
                 data: {
@@ -88,6 +141,7 @@
                 }
             });
 
+            // Top 10 Volume Chart
             new Chart(document.getElementById('volumeChart'), {
                 type: 'bar',
                 data: {
@@ -110,6 +164,154 @@
                     scales: {
                         y: {
                             beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Transaction Type Distribution Chart
+            new Chart(document.getElementById('typeDistributionChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: typeDistributionData.map(t => t.type === 'expense' ? 'Expenses' : 'Earnings'),
+                    datasets: [{
+                        data: typeDistributionData.map(t => t.total),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Capital Distribution Chart
+            new Chart(document.getElementById('capitalDistributionChart'), {
+                type: 'pie',
+                data: {
+                    labels: capitalDistributionData.map(c => c.name),
+                    datasets: [{
+                        label: 'Capital Share',
+                        data: capitalDistributionData.map(c => c.percentage),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(199, 199, 199, 0.7)',
+                            'rgba(83, 102, 255, 0.7)',
+                            'rgba(40, 159, 64, 0.7)',
+                            'rgba(215, 99, 132, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(199, 199, 199, 1)',
+                            'rgba(83, 102, 255, 1)',
+                            'rgba(40, 159, 64, 1)',
+                            'rgba(215, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                callback: function(context) {
+                                    return context.text + ' (' + context.raw.toFixed(1) + '%)';
+                                }
+                            }
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const percentage = context.parsed.toFixed(2);
+                                    const balance = capitalDistributionData[context.dataIndex].balance;
+                                    return context.label + ': ' + percentage + '% (Balance: $' + parseFloat(balance).toFixed(2) + ')';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Daily Transaction Trend Chart
+            new Chart(document.getElementById('dailyTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: dailyTrendData.map(d => d.date),
+                    datasets: [{
+                        label: 'Daily Volume',
+                        data: dailyTrendData.map(d => d.total),
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Total Market Cap Chart
+            new Chart(document.getElementById('marketCapChart'), {
+                type: 'line',
+                data: {
+                    labels: marketCapData.map(d => d.day),
+                    datasets: [{
+                        label: 'Total Company Value',
+                        data: marketCapData.map(d => d.total_company_value),
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
                         }
                     }
                 }

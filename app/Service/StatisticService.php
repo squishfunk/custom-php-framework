@@ -26,6 +26,10 @@ class StatisticService {
         return [
             'topClientsByBalance' => $this->statisticsRepository->getTopClientsByBalance($limit, $dateFrom, $dateTo),
             'topClientsByVolume' => $this->statisticsRepository->getTopClientsByVolume($limit, $dateFrom, $dateTo),
+            'transactionTypeDistribution' => $this->statisticsRepository->getTransactionTypeDistribution($dateFrom, $dateTo),
+            'dailyTransactionTrend' => $this->statisticsRepository->getDailyTransactionTrend($dateFrom, $dateTo),
+            'totalMarketCap' => $this->statisticsRepository->getTotalMarketCap($dateFrom, $dateTo),
+            'capitalDistribution' => $this->statisticsRepository->getCapitalDistribution($limit, $dateFrom, $dateTo),
         ];
     }
 }
