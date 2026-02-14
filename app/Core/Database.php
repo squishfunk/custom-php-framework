@@ -20,11 +20,16 @@ class Database
      * @return PDO
      * @throws PDOException
      */
-    public static function getConnection(): PDO
+    public static function getConnection(bool $testing = false): PDO
     {
         if (self::$instance === null) {
             $config = require __DIR__ . '/../../config/config.php';
-            $dbConfig = $config['database'];
+
+            if ($testing) {
+                $dbConfig = $config['database_test'];
+            } else {
+                $dbConfig = $config['database'];
+            }
 
             $dsn = sprintf(
                 'mysql:host=%s;port=%s;dbname=%s;charset=%s',

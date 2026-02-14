@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  mysql:
+  mysql_test:
     image: mysql:8.0
-    container_name: mysql
+    container_name: mysql_test
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: thinkhuge
+      MYSQL_DATABASE: thinkhuge_test
       MYSQL_USER: thinkhuge
       MYSQL_PASSWORD: thinkhuge
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - ./database/db:/var/lib/mysql
+      - ./database/db_test:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
