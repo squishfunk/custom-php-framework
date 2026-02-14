@@ -75,10 +75,6 @@ class ClientService
             $client->setEmail($dto->email);
         }
 
-        if ($dto->balance !== null) {
-            $client->setBalance($dto->balance);
-        }
-
         $this->clientRepository->update($client);
     }
 

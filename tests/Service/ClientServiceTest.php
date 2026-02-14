@@ -164,10 +164,10 @@ class ClientServiceTest extends TestCase
             ->with($this->callback(function (Client $c) {
                 return $c->getName() === 'Jane Doe'
                     && $c->getEmail() === 'jane@example.com'
-                    && $c->getBalance() === 200.0;
+                    && $c->getBalance() === 100.0;
             }));
 
-        $dto = new ClientDto('Jane Doe', 'jane@example.com', 200.0);
+        $dto = new ClientDto('Jane Doe', 'jane@example.com');
         $this->clientService->updateClient(1, $dto);
     }
 

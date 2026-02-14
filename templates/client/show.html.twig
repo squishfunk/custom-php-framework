@@ -14,6 +14,7 @@
 			{{ client.balance }}</p>
 		<div>
 			<a href="/transactions/create?client_id={{ client.id }}" class="btn btn-success">Add Transaction</a>
+			<a href="/clients/{{ client.id }}/edit" class="btn btn-primary ms-2">Edit Client</a>
 			<a href="/" class="btn btn-secondary ms-2">Back to List</a>
 		</div>
 	</div>

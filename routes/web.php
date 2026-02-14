@@ -42,6 +42,9 @@ $router->post('/clients', [ClientController::class, 'store'])
 $router->get('/clients/{id}', [ClientController::class, 'show'])
     ->addMiddleware(new \App\Middleware\AuthMiddleware());
 
+$router->get('/clients/{id}/edit', [ClientController::class, 'edit'])
+    ->addMiddleware(new \App\Middleware\AuthMiddleware());
+
 $router->post('/clients/{id}', [ClientController::class, 'update'])
     ->addMiddleware(new \App\Middleware\AuthMiddleware());
 

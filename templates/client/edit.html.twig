@@ -1,0 +1,33 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Edit Client - {{ app_name }}{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Edit Client: {{ client.name }}</h1>
+    
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST" action="/clients/{{ client.id }}">
+        {{ csrf_field() }}
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control {{ errors.name ? 'is-invalid' : '' }}" id="name" name="name" required value="{{ old.name|default(client.name) }}">
+            {% if errors.name %}
+                <div class="invalid-feedback">{{ errors.name[0] }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control {{ errors.email ? 'is-invalid' : '' }}" id="email" name="email" required value="{{ old.email|default(client.email) }}">
+            {% if errors.email %}
+                <div class="invalid-feedback">{{ errors.email[0] }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Client</button>
+        <a href="/clients/{{ client.id }}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+{% endblock %}

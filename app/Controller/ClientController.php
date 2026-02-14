@@ -63,8 +63,7 @@ class ClientController extends Controller
 
         $dto = new ClientDto(
             $data['name'],
-            $data['email'],
-            isset($data['balance']) ? (float) $data['balance'] : null
+            $data['email']
         );
 
         try {
@@ -91,6 +90,19 @@ class ClientController extends Controller
             'client' => $client,
             'transactions' => $transactions,
             'balanceHistory' => $balanceHistory
+        ]);
+    }
+
+    public function edit(Request $request, string $id)
+    {
+        try {
+            $client = $this->clientService->getClient((int) $id);
+        } catch (ClientNotFoundException $e) {
+            throw new HttpException($e->getMessage(), 404);
+        }
+
+        return $this->render('client/edit.html.twig', [
+            'client' => $client
         ]);
     }
 
