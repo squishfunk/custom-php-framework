@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Core\Config;
 use PDO;
 use PDOException;
 
@@ -23,13 +24,7 @@ class Database
     public static function getConnection(bool $testing = false): PDO
     {
         if (self::$instance === null) {
-            $config = require __DIR__ . '/../../config/config.php';
-
-            if ($testing) {
-                $dbConfig = $config['database_test'];
-            } else {
-                $dbConfig = $config['database'];
-            }
+            $dbConfig = $testing ? Config::get('database_test') : Config::get('database');
 
             $dsn = sprintf(
                 'mysql:host=%s;port=%s;dbname=%s;charset=%s',

@@ -1,6 +1,6 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}Add Transaction - ThinkHuge App{% endblock %}
+{% block title %}Add Transaction - {{ app_name }}{% endblock %}
 
 {% block body %}
     <h1 class="mb-4">Add Transaction for {{ client_name }}</h1>
@@ -37,7 +37,7 @@
         
         <div class="mb-3">
             <label for="date" class="form-label">Date</label>
-            <input type="datetime-local" class="form-control {{ errors.date ? 'is-invalid' : '' }}" id="date" name="date" required value="{{ old.date|default('now'|date('Y-m-d H:i')) }}">
+            <input type="datetime-local" step="1" class="form-control {{ errors.date ? 'is-invalid' : '' }}" id="date" name="date" required value="{{ old.date|default('now'|date('Y-m-d H:i:s')) }}">
             {% if errors.date %}
                 <div class="invalid-feedback">{{ errors.date[0] }}</div>
             {% endif %}

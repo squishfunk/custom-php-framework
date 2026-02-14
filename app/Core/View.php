@@ -7,6 +7,7 @@ namespace App\Core;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
+use App\Core\Config;
 
 class View
 {
@@ -24,6 +25,8 @@ class View
                 'id' => $_SESSION['admin_id'],
                 'email' => $_SESSION['admin_email'] ?? '',
             ] : null);
+
+            self::$twig->addGlobal('app_name', Config::get('app.name'));
 
             self::$twig->addFunction(new TwigFunction('csrf_token', function () {
                 return CsrfToken::getToken();

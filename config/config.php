@@ -21,7 +21,7 @@ return [
         'charset' => 'utf8mb4',
     ],
     'app' => [
-        'debug' => $_ENV['APP_DEBUG'] ?? true,
-        'name' => 'MVC Skeleton',
+        'name' => $_ENV['APP_NAME'] ?? 'App',
+        'env' => $_ENV['APP_ENV'] ?? 'prod',
     ],
 ];
