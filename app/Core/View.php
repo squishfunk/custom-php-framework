@@ -28,6 +28,8 @@ class View
 
             self::$twig->addGlobal('app_name', Config::get('app.name'));
 
+            self::$twig->addGlobal('query', $_GET);
+
             self::$twig->addFunction(new TwigFunction('csrf_token', function () {
                 return CsrfToken::getToken();
             }));

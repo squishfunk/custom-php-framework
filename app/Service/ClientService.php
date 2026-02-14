@@ -59,11 +59,6 @@ class ClientService
         return $this->clientRepository->findAll();
     }
 
-    public function getTopClientsByBalance(int $limit): array
-    {
-        return $this->clientRepository->findTopByBalance($limit);
-    }
-
     public function updateClient(int $id, ClientDto $dto): void
     {
         $client = $this->clientRepository->find($id);

@@ -148,24 +148,6 @@ class ClientServiceTest extends TestCase
         $this->assertEquals('Jane Doe', $result[1]->getName());
     }
 
-    public function testGetTopClientsByBalance(): void
-    {
-        $clients = [
-            new Client(1, 'Rich Client', 'rich@example.com', 10000.0, '2023-01-01', '2023-01-01'),
-            new Client(2, 'Poor Client', 'poor@example.com', 10.0, '2023-01-02', '2023-01-02'),
-        ];
-
-        $this->clientRepositoryMock
-            ->expects($this->once())
-            ->method('findTopByBalance')
-            ->with(5)
-            ->willReturn($clients);
-
-        $result = $this->clientService->getTopClientsByBalance(5);
-
-        $this->assertCount(2, $result);
-    }
-
     public function testUpdateClient(): void
     {
         $client = new Client(1, 'John Doe', 'john@example.com', 100.0, '2023-01-01', '2023-01-01');

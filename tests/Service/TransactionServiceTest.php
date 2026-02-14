@@ -83,25 +83,6 @@ class TransactionServiceTest extends TestCase
         $this->transactionService->getBalanceHistory(999);
     }
 
-    public function testGetTopClientsByVolume(): void
-    {
-        $topClients = [
-            ['client_id' => 1, 'total_volume' => 5000.0, 'name' => 'Top Client'],
-            ['client_id' => 2, 'total_volume' => 3000.0, 'name' => 'Second Client'],
-        ];
-
-        $this->transactionRepositoryMock
-            ->expects($this->once())
-            ->method('findTopClientsByVolume')
-            ->with(10)
-            ->willReturn($topClients);
-
-        $result = $this->transactionService->getTopClientsByVolume(10);
-
-        $this->assertCount(2, $result);
-        $this->assertEquals('Top Client', $result[0]['name']);
-    }
-
     public function testAddTransactionEarning(): void
     {
         $client = new Client(1, 'John Doe', 'john@example.com', 100.0, '2023-01-01', '2023-01-01');

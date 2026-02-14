@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Core\Database;
 use App\Entity\Transaction;
+use App\Entity\Client;
 use PDO;
 
 class TransactionRepository
@@ -50,19 +51,56 @@ class TransactionRepository
 
         return $transactions;
     }
-    public function findTopClientsByVolume(int $limit): array
+    public function findTopClientsByVolume(int $limit, ?string $dateFrom = null, ?string $dateTo = null): array
     {
-        $stmt = $this->db->prepare(
-            'SELECT t.client_id, c.name, SUM(t.amount) as volume 
+        if(!$dateFrom){
+            $dateFrom = date('Y-m-d', strtotime('-7 days'));
+        }
+
+        if(!$dateTo){
+            $dateTo = date('Y-m-d');
+        }
+
+        $dateTo = date('Y-m-d 23:59:59', strtotime($dateTo));
+
+        $sql = 'SELECT t.client_id, c.name, SUM(t.amount) as volume 
              FROM transactions t 
              JOIN clients c ON t.client_id = c.id 
+             WHERE t.date >= :date_from AND t.date <= :date_to
              GROUP BY t.client_id 
              ORDER BY volume DESC 
-             LIMIT :limit'
-        );
+             LIMIT :limit';
+        
+        $params = [
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'limit' => $limit
+        ];
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function findTopClientsByBalance(int $limit): array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM clients ORDER BY balance DESC LIMIT :limit');
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $clients = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $clients[] = new Client(
+                $row['id'],
+                $row['name'],
+                $row['email'],
+                (float) $row['balance'],
+                $row['created_at'],
+                $row['updated_at']
+            );
+        }
+
+        return $clients;
     }
 }

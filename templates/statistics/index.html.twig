@@ -9,6 +9,24 @@
 			<h1>Statistics</h1>
 		</div>
 
+        <div class="mb-4">
+            <form action="statistics" method="GET">
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="date_from" class="form-label">Date From</label>
+                        <input type="date" class="form-control" id="date_from" name="date_from" required value="{{ query.date_from ?? '-7 days'|date('Y-m-d') }}">
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label for="date_to" class="form-label">Date To</label>
+                        <input type="date" class="form-control" id="date_to" name="date_to" required value="{{ query.date_to ?? 'now'|date('Y-m-d') }}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Display Balance</button>
+                </div>
+            </form>
+        </div>
+
 		<div
 			class="row">
 			<!-- Top 10 Balance Chart -->
@@ -40,8 +58,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-            const balanceData = {{topBalance | json_encode | raw}};
-            const volumeData = {{topVolume | json_encode | raw}};
+            const balanceData = {{topClientsByBalance | json_encode | raw}};
+            const volumeData = {{topClientsByVolume | json_encode | raw}};
 
             new Chart(document.getElementById('balanceChart'), {
                 type: 'bar',

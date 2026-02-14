@@ -63,11 +63,6 @@ class TransactionService
         return array_reverse($history);
     }
 
-    public function getTopClientsByVolume(int $limit): array
-    {
-        return $this->transactionRepository->findTopClientsByVolume($limit);
-    }
-
     public function addTransaction(TransactionDto $dto): void
     {
         $client = $this->clientRepository->find($dto->clientId);

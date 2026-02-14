@@ -89,6 +89,11 @@ class Request
         return isset($this->post[$key]) ? $this->post[$key] : null;
     }
 
+    public function query(string $key): ?string
+    {
+        return isset($this->query[$key]) ? $this->query[$key] : null;
+    }
+
     public function all(): array
     {
         return $this->post;
