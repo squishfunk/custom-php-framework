@@ -70,6 +70,12 @@ class ClientController extends Controller
             $this->clientService->updateClient((int) $id, $dto);
         } catch (ClientNotFoundException $e) {
             throw new HttpException($e->getMessage(), 404);
+        } catch (ClientAlreadyExistsException $e) {
+            return $this->render('client/edit.html.twig', [
+                'client' => $this->clientService->getClient((int) $id),
+                'error' => $e->getMessage(),
+                'old' => $data
+            ], 400);
         }
 
         $this->redirect('/');

@@ -71,7 +71,12 @@ class ClientService
             $client->setName($dto->name);
         }
 
-        if ($dto->email !== null) {
+        if ($dto->email !== null && $dto->email !== $client->getEmail()) {
+            // Check if email exists but not for the same client
+            $existingClient = $this->clientRepository->findByEmailExceptId($dto->email, $id);
+            if ($existingClient) {
+                throw new ClientAlreadyExistsException();
+            }
             $client->setEmail($dto->email);
         }
 

@@ -19,8 +19,9 @@ class StatisticController extends Controller
     {
         $dateFrom = $request->query('date_from');
         $dateTo = $request->query('date_to');
+        $allTime = !$dateFrom && !$dateTo;
 
-        $data = $this->statisticService->getStatistics(10, $dateFrom, $dateTo);
+        $data = $this->statisticService->getStatistics(10, $dateFrom, $dateTo, $allTime);
 
         return $this->render('statistics/index.html.twig', $data);
     }

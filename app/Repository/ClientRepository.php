@@ -58,6 +58,26 @@ class ClientRepository
         );
     }
 
+    public function findByEmailExceptId(string $email, int $excludeId): ?Client
+    {
+        $stmt = $this->db->prepare('SELECT * FROM clients WHERE email = :email AND id != :id');
+        $stmt->execute(['email' => $email, 'id' => $excludeId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new Client(
+            (int) $row['id'],
+            $row['name'],
+            $row['email'],
+            (float) $row['balance'],
+            $row['created_at'],
+            $row['updated_at']
+        );
+    }
+
     public function find(int $id): Client
     {
         $stmt = $this->db->prepare('SELECT * FROM clients WHERE id = :id');

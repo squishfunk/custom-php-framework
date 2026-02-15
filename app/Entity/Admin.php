@@ -26,7 +26,7 @@ class Admin
         return new self(
             0,
             $email,
-            password_hash($password, PASSWORD_DEFAULT), // TODO SALT? 
+            password_hash($password, PASSWORD_DEFAULT), 
             date('Y-m-d H:i:s')
         );
     }

@@ -126,7 +126,7 @@ class StatisticsServiceTest extends TestCase
         $this->statisticsRepositoryMock
             ->expects($this->once())
             ->method('getCapitalDistribution')
-            ->with($limit, $dateFrom, $expectedDateTo)
+            ->with($limit)
             ->willReturn([]);
         $this->statisticsService->getStatistics($limit, $dateFrom, $dateTo);
     }

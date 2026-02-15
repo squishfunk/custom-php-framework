@@ -12,16 +12,18 @@ class StatisticService {
         $this->statisticsRepository = $statisticsRepository ?? new StatisticRepository();
     }
 
-    public function getStatistics(int $limit, ?string $dateFrom = null, ?string $dateTo = null){
-        if(!$dateFrom){
-            $dateFrom = date('Y-m-d', strtotime('-7 days'));
-        }
+    public function getStatistics(int $limit, ?string $dateFrom = null, ?string $dateTo = null, bool $allTime = false){
+        if(!$allTime){
+            if(!$dateFrom){
+                $dateFrom = date('Y-m-d', strtotime('-7 days'));
+            }
 
-        if(!$dateTo){
-            $dateTo = date('Y-m-d');
-        }
+            if(!$dateTo){
+                $dateTo = date('Y-m-d');
+            }
 
-        $dateTo = date('Y-m-d 23:59:59', strtotime($dateTo));
+            $dateTo = date('Y-m-d 23:59:59', strtotime($dateTo));
+        }
 
         return [
             'topClientsByBalance' => $this->statisticsRepository->getTopClientsByBalance($limit, $dateFrom, $dateTo),
@@ -30,6 +32,7 @@ class StatisticService {
             'dailyTransactionTrend' => $this->statisticsRepository->getDailyTransactionTrend($dateFrom, $dateTo),
             'totalMarketCap' => $this->statisticsRepository->getTotalMarketCap($dateFrom, $dateTo),
             'capitalDistribution' => $this->statisticsRepository->getCapitalDistribution($limit),
+            'query' => ['date_from' => $dateFrom, 'date_to' => $dateTo],
         ];
     }
 }

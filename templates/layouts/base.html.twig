@@ -34,7 +34,10 @@
 									{{ user.email }}</span>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link btn btn-outline-light btn-sm ms-2" href="/logout">Logout</a>
+								<form method="POST" action="/logout" class="d-inline">
+									{{ csrf_field() }}
+									<button type="submit" class="nav-link btn btn-outline-light btn-sm ms-2" style="border: none; background: transparent;">Logout</button>
+								</form>
 							</li>
 						{% else %}
 							<li class="nav-item">
