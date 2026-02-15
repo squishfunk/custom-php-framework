@@ -29,7 +29,7 @@ class StatisticService {
             'transactionTypeDistribution' => $this->statisticsRepository->getTransactionTypeDistribution($dateFrom, $dateTo),
             'dailyTransactionTrend' => $this->statisticsRepository->getDailyTransactionTrend($dateFrom, $dateTo),
             'totalMarketCap' => $this->statisticsRepository->getTotalMarketCap($dateFrom, $dateTo),
-            'capitalDistribution' => $this->statisticsRepository->getCapitalDistribution($limit, $dateFrom, $dateTo),
+            'capitalDistribution' => $this->statisticsRepository->getCapitalDistribution($limit),
         ];
     }
 }

@@ -116,10 +116,11 @@ class StatisticRepository
             c.name,
             c.balance,
             ROUND(
-                c.balance / (SELECT SUM(balance) FROM clients) * 100,
+                c.balance / (SELECT SUM(balance) FROM clients WHERE balance > 0) * 100,
                 2
             ) AS percentage
         FROM clients c
+        WHERE c.balance > 0
         ORDER BY c.balance DESC
         LIMIT :limit';
         
