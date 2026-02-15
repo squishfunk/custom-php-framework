@@ -19,7 +19,7 @@ class View
             $loader = new FilesystemLoader(__DIR__ . '/../../templates');
             self::$twig = new Environment($loader, [
                 'cache' => false,
-                'debug' => true,
+                'debug' => Config::get('app.env') === 'dev',
             ]);
             self::$twig->addGlobal('user', isset($_SESSION['admin_id']) ? [
                 'id' => $_SESSION['admin_id'],
