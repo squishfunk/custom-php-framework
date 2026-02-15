@@ -4,7 +4,9 @@ CREATE TABLE IF NOT EXISTS clients (
     email VARCHAR(255) NOT NULL UNIQUE,
     balance DECIMAL(10, 2) DEFAULT 0.00,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_balance (balance),
+    INDEX idx_created_at (created_at)
 );
 
 CREATE TABLE IF NOT EXISTS admins (
@@ -22,5 +24,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     description VARCHAR(255),
     date DATETIME NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+    INDEX idx_client_id (client_id),
+    INDEX idx_date (date),
+    INDEX idx_type (type),
+    INDEX idx_client_date (client_id, date)
 );
