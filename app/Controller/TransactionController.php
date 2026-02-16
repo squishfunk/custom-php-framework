@@ -25,9 +25,9 @@ class TransactionController extends Controller
         $this->clientService = $clientService ?? new ClientService();
     }
 
-    public function create()
+    public function create(Request $request): Response
     {
-        $clientId = $_GET['client_id'] ?? null;
+        $clientId = $request->input('client_id');
 
         if (!$clientId) {
             return new Response('Client ID missing', 400);
@@ -50,7 +50,7 @@ class TransactionController extends Controller
         $clientId = $request->input('client_id');
 
         $data = $this->validate($request, [
-            'type' => 'required|in:earning,expense',
+            'type' => 'required',
             'amount' => 'required|numeric',
             'description' => 'max:255',
             'date' => 'required|date'
