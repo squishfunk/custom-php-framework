@@ -7,6 +7,7 @@ namespace Tests\Service;
 use App\Dto\ClientDto;
 use App\Entity\Client;
 use App\Exception\ClientNotFoundException;
+use App\Exception\InsufficientBalanceException;
 use App\Repository\ClientRepository;
 use App\Service\ClientService;
 use App\Service\TransactionService;
@@ -76,25 +77,19 @@ class ClientServiceTest extends TestCase
         $this->assertEquals(0.0, $savedClient->getBalance()); // before transaction
     }
 
-    public function testCreateClientWithNegativeInitialBalance(): void
+    public function testCreateClientWithNegativeInitialBalanceThrowsException(): void
     {
         $dto = new ClientDto('John Doe', 'john@example.com', -50.0);
 
         $this->clientRepositoryMock
-            ->expects($this->once())
-            ->method('save')
-            ->willReturnCallback(function (Client $client) {
-                $client->setId(1);
-            });
+            ->expects($this->never())
+            ->method('save');
 
         $this->transactionServiceMock
-            ->expects($this->once())
-            ->method('addTransaction')
-            ->with($this->callback(function ($transactionDto) {
-                return $transactionDto->type === 'expense'
-                    && $transactionDto->amount === 50.0;
-            }));
+            ->expects($this->never())
+            ->method('addTransaction');
 
+        $this->expectException(InsufficientBalanceException::class);
         $this->clientService->createClient($dto);
     }
 

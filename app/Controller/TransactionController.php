@@ -10,6 +10,7 @@ use App\Service\TransactionService;
 use App\Dto\TransactionDto;
 use App\Core\Exception\HttpException;
 use App\Exception\ClientNotFoundException;
+use App\Exception\InsufficientBalanceException;
 
 class TransactionController extends Controller
 {
@@ -68,6 +69,14 @@ class TransactionController extends Controller
             $this->redirect('/clients/' . $clientId);
         } catch (ClientNotFoundException $e) {
             throw new HttpException($e->getMessage(), 404);
+        } catch (InsufficientBalanceException $e) {
+            $client = $this->clientService->getClient((int) $clientId);
+            return $this->render('transaction/create.html.twig', [
+                'client_name' => $client->getName(),
+                'client_id' => $client->getId(),
+                'error' => $e->getMessage(),
+                'old' => $data
+            ], 400);
         } catch (\Exception $e) {
             return new Response('Error: ' . $e->getMessage());
         }

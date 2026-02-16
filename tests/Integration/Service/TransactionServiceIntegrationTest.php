@@ -10,6 +10,7 @@ use App\Entity\Client;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
 use App\Service\TransactionService;
+use App\Exception\InsufficientBalanceException;
 use PHPUnit\Framework\TestCase;
 
 class TransactionServiceIntegrationTest extends TestCase
@@ -153,15 +154,14 @@ class TransactionServiceIntegrationTest extends TestCase
         $this->transactionService->addTransaction($dto);
     }
 
-    public function testNegativeBalanceScenario(): void
+    public function testNegativeBalanceScenarioThrowsException(): void
     {
         $client = Client::create('Negative User', 'negative@example.com', 50.0);
         $this->clientRepository->save($client);
 
         $dto = new TransactionDto($client->getId(), 'expense', 100.0, 'Big purchase', '2023-01-01');
-        $this->transactionService->addTransaction($dto);
 
-        $updatedClient = $this->clientRepository->find($client->getId());
-        $this->assertEquals(-50.0, $updatedClient->getBalance());
+        $this->expectException(InsufficientBalanceException::class);
+        $this->transactionService->addTransaction($dto);
     }
 }

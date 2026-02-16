@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Core\Database;
 use App\Entity\Transaction;
 use App\Exception\ClientNotFoundException;
+use App\Exception\InsufficientBalanceException;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
 use App\Dto\TransactionDto;
@@ -73,6 +74,10 @@ class TransactionService
 
         $currentBalance = $client->getBalance();
         $newBalance = $this->calculateNewBalance($currentBalance, $dto->type, $dto->amount);
+
+        if ($newBalance < 0) {
+            throw new InsufficientBalanceException();
+        }
 
         Database::beginTransaction();
 

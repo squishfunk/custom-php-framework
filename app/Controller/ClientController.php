@@ -11,6 +11,7 @@ use App\Service\ClientService;
 use App\Service\TransactionService;
 use App\Core\Exception\HttpException;
 use App\Exception\ClientAlreadyExistsException;
+use App\Exception\InsufficientBalanceException;
 
 class ClientController extends Controller
 {
@@ -42,7 +43,7 @@ class ClientController extends Controller
         try {
             $this->clientService->createClient($dto);
             $this->redirect('/');
-        } catch (ClientAlreadyExistsException $e) {
+        } catch (ClientAlreadyExistsException|InsufficientBalanceException $e) {
             return $this->render('client/create.html.twig', [
                 'error' => $e->getMessage(),
                 'old' => $data

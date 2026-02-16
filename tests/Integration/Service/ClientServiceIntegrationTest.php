@@ -8,6 +8,7 @@ use App\Core\Database;
 use App\Dto\ClientDto;
 use App\Exception\ClientAlreadyExistsException;
 use App\Exception\ClientNotFoundException;
+use App\Exception\InsufficientBalanceException;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
 use App\Service\ClientService;
@@ -78,19 +79,12 @@ class ClientServiceIntegrationTest extends TestCase
         $this->assertEquals(500.0, $transactions[0]->getAmount());
     }
 
-    public function testCreateClientWithNegativeBalance(): void
+    public function testCreateClientWithNegativeBalanceThrowsException(): void
     {
         $dto = new ClientDto('Debtor', 'debtor@example.com', -200.0);
+
+        $this->expectException(InsufficientBalanceException::class);
         $this->clientService->createClient($dto);
-
-        $clients = $this->clientService->getAllClients();
-        $this->assertCount(1, $clients);
-        $this->assertEquals(-200.0, $clients[0]->getBalance());
-
-        $transactions = $this->transactionRepository->findByClientId($clients[0]->getId());
-        $this->assertCount(1, $transactions);
-        $this->assertEquals('expense', $transactions[0]->getType());
-        $this->assertEquals(200.0, $transactions[0]->getAmount());
     }
 
     public function testCreateClientWithDuplicateEmailThrowsException(): void

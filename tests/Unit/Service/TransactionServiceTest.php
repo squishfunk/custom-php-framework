@@ -8,6 +8,7 @@ use App\Dto\TransactionDto;
 use App\Entity\Client;
 use App\Entity\Transaction;
 use App\Exception\ClientNotFoundException;
+use App\Exception\InsufficientBalanceException;
 use App\Repository\ClientRepository;
 use App\Repository\TransactionRepository;
 use App\Service\TransactionService;
@@ -163,5 +164,50 @@ class TransactionServiceTest extends TestCase
         $result = $this->transactionService->getClientTransactions(1);
 
         $this->assertCount(2, $result);
+    }
+
+    public function testAddTransactionExpenseThrowsExceptionWhenInsufficientFunds(): void
+    {
+        $client = new Client(1, 'John Doe', 'john@example.com', 50.0, '2023-01-01', '2023-01-01');
+
+        $this->clientRepositoryMock
+            ->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn($client);
+
+        $this->transactionRepositoryMock
+            ->expects($this->never())
+            ->method('save');
+
+        $this->expectException(InsufficientBalanceException::class);
+
+        $dto = new TransactionDto(1, 'expense', 100.0, 'Big purchase', '2023-01-15');
+        $this->transactionService->addTransaction($dto);
+    }
+
+    public function testAddTransactionExpenseThatBringsBalanceToZeroIsAllowed(): void
+    {
+        $client = new Client(1, 'John Doe', 'john@example.com', 100.0, '2023-01-01', '2023-01-01');
+
+        $this->clientRepositoryMock
+            ->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn($client);
+
+        $this->transactionRepositoryMock
+            ->expects($this->once())
+            ->method('save');
+
+        $this->clientRepositoryMock
+            ->expects($this->once())
+            ->method('update')
+            ->with($this->callback(function (Client $c) {
+                return $c->getBalance() === 0.0; // 100 - 100
+            }));
+
+        $dto = new TransactionDto(1, 'expense', 100.0, 'Full withdrawal', '2023-01-15');
+        $this->transactionService->addTransaction($dto);
     }
 }
