@@ -5,13 +5,14 @@ namespace App\Service;
 use App\Entity\Admin;
 use App\Exception\AdminAlreadyExistsException;
 use App\Exception\InvalidCredentialsException;
+use App\Repository\AdminRepositoryInterface;
 use App\Repository\AdminRepository;
 
 class AuthService
 {
-    private AdminRepository $adminRepository;
+    private AdminRepositoryInterface $adminRepository;
 
-    public function __construct(?AdminRepository $adminRepository = null)
+    public function __construct(?AdminRepositoryInterface $adminRepository = null)
     {
         $this->adminRepository = $adminRepository ?? new AdminRepository();
     }

@@ -66,7 +66,7 @@ class TransactionController extends Controller
 
         try {
             $this->transactionService->addTransaction($dto);
-            $this->redirect('/clients/' . $clientId);
+            return $this->redirect('/clients/' . $clientId);
         } catch (ClientNotFoundException $e) {
             throw new HttpException($e->getMessage(), 404);
         } catch (InsufficientBalanceException $e) {

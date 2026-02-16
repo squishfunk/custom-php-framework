@@ -21,7 +21,7 @@ class AuthController extends Controller
     public function showLogin(): Response
     {
         if ($this->authService->isLoggedIn()) {
-            $this->redirect('/');
+            return $this->redirect('/');
         }
 
         return $this->render('auth/login.html.twig');
@@ -34,11 +34,9 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-
-
         try {
             if ($this->authService->login($data['email'], $data['password'])) {
-                $this->redirect('/');
+                return $this->redirect('/');
             }
         } catch (InvalidCredentialsException $e) {
             return $this->render('auth/login.html.twig', [
@@ -51,7 +49,7 @@ class AuthController extends Controller
     public function showRegister(): Response
     {
         if ($this->authService->isLoggedIn()) {
-            $this->redirect('/');
+            return $this->redirect('/');
         }
         return $this->render('auth/register.html.twig');
     }
@@ -65,7 +63,7 @@ class AuthController extends Controller
 
         try {
             $this->authService->registerAdmin($data['email'], $data['password']);
-            $this->redirect('/login');
+            return $this->redirect('/login');
         } catch (AdminAlreadyExistsException $e) {
             return $this->render('auth/register.html.twig', [
                 'error' => $e->getMessage(),
@@ -82,6 +80,6 @@ class AuthController extends Controller
     public function logout()
     {
         $this->authService->logout();
-        $this->redirect('/login');
+        return $this->redirect('/login');
     }
 }

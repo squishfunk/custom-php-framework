@@ -6,7 +6,7 @@ use App\Core\Database;
 use App\Entity\Admin;
 use PDO;
 
-class AdminRepository
+class AdminRepository implements AdminRepositoryInterface
 {
     private PDO $db;
 

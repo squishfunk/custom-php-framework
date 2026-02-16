@@ -8,15 +8,16 @@ use App\Entity\Client;
 use App\Exception\ClientAlreadyExistsException;
 use App\Exception\InsufficientBalanceException;
 use App\Exception\ClientNotFoundException;
+use App\Repository\ClientRepositoryInterface;
 use App\Repository\ClientRepository;
 
 class ClientService
 {
-    private ClientRepository $clientRepository;
+    private ClientRepositoryInterface $clientRepository;
     private TransactionService $transactionService;
 
     public function __construct(
-        ?ClientRepository $clientRepository = null,
+        ?ClientRepositoryInterface $clientRepository = null,
         ?TransactionService $transactionService = null
     ) {
         $this->clientRepository = $clientRepository ?? new ClientRepository();

@@ -7,7 +7,7 @@ use App\Entity\Client;
 use App\Exception\ClientNotFoundException;
 use PDO;
 
-class ClientRepository
+class ClientRepository implements ClientRepositoryInterface
 {
     private PDO $db;
 

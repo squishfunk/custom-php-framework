@@ -42,7 +42,7 @@ class ClientController extends Controller
 
         try {
             $this->clientService->createClient($dto);
-            $this->redirect('/');
+            return $this->redirect('/');
         } catch (ClientAlreadyExistsException|InsufficientBalanceException $e) {
             return $this->render('client/create.html.twig', [
                 'error' => $e->getMessage(),
@@ -81,7 +81,7 @@ class ClientController extends Controller
             ], 400);
         }
 
-        $this->redirect('/');
+        return $this->redirect('/');
     }
 
     public function show(Request $request, string $id)
@@ -122,7 +122,7 @@ class ClientController extends Controller
         } catch (ClientNotFoundException $e) {
             throw new HttpException($e->getMessage(), 404);
         }
-        $this->redirect('/');
+        return $this->redirect('/');
     }
 
     public function index(Request $request)

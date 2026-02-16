@@ -6,7 +6,9 @@ use App\Core\Database;
 use App\Entity\Transaction;
 use App\Exception\ClientNotFoundException;
 use App\Exception\InsufficientBalanceException;
+use App\Repository\ClientRepositoryInterface;
 use App\Repository\ClientRepository;
+use App\Repository\TransactionRepositoryInterface;
 use App\Repository\TransactionRepository;
 use App\Dto\TransactionDto;
 use PDOException;
@@ -14,12 +16,12 @@ use Exception;
 
 class TransactionService
 {
-    private TransactionRepository $transactionRepository;
-    private ClientRepository $clientRepository;
+    private TransactionRepositoryInterface $transactionRepository;
+    private ClientRepositoryInterface $clientRepository;
 
     public function __construct(
-        ?TransactionRepository $transactionRepository = null,
-        ?ClientRepository $clientRepository = null
+        ?TransactionRepositoryInterface $transactionRepository = null,
+        ?ClientRepositoryInterface $clientRepository = null
     ) {
         $this->transactionRepository = $transactionRepository ?? new TransactionRepository();
         $this->clientRepository = $clientRepository ?? new ClientRepository();

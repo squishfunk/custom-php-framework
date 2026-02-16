@@ -7,7 +7,7 @@ use App\Entity\Transaction;
 use App\Entity\Client;
 use PDO;
 
-class TransactionRepository
+class TransactionRepository implements TransactionRepositoryInterface
 {
     private PDO $db;
 

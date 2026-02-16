@@ -13,6 +13,11 @@ class SessionMiddleware implements MiddlewareInterface
     public function handle(Request $request, callable $next): Response
     {
         if (session_status() === PHP_SESSION_NONE) {
+            session_set_cookie_params([
+                'httponly' => true,
+                'samesite' => 'Strict',
+                'secure' => isset($_SERVER['HTTPS']),
+            ]);
             session_start();
         }
 

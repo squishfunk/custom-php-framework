@@ -11,7 +11,7 @@ use App\Core\Request;
 abstract class Controller
 {
 
-    protected function validate(Request $request, array $rules): array
+    protected function validate(Request $request, array $rules): array|Response
     {
         $data = $request->all();
         $validator = new Validator();
@@ -40,9 +40,8 @@ abstract class Controller
         return new Response(View::render($template, $data), $statusCode);
     }
 
-    protected function redirect(string $url): void
+    protected function redirect(string $url): Response
     {
-        header("Location: $url");
-        exit;
+        return new Response('', 302, ['Location' => $url]);
     }
 }
