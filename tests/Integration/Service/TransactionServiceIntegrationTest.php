@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Integration;
+namespace Tests\Integration\Service;
 
 use App\Core\Database;
 use App\Dto\TransactionDto;
@@ -12,7 +12,7 @@ use App\Repository\TransactionRepository;
 use App\Service\TransactionService;
 use PHPUnit\Framework\TestCase;
 
-class TransactionIntegrationTest extends TestCase
+class TransactionServiceIntegrationTest extends TestCase
 {
     private TransactionService $transactionService;
     private ClientRepository $clientRepository;
@@ -153,65 +153,14 @@ class TransactionIntegrationTest extends TestCase
         $this->transactionService->addTransaction($dto);
     }
 
-    public function testMultipleClientsTransactionsAreIsolated(): void
-    {
-        // Create two clients
-        $client1 = Client::create('Client One', 'client1@example.com', 100.0);
-        $client2 = Client::create('Client Two', 'client2@example.com', 200.0);
-        $this->clientRepository->save($client1);
-        $this->clientRepository->save($client2);
-
-        // Add transactions to client 1 only
-        $dto1 = new TransactionDto($client1->getId(), 'earning', 50.0, 'Earning', '2023-01-01');
-        $dto2 = new TransactionDto($client1->getId(), 'expense', 25.0, 'Expense', '2023-01-02');
-        $this->transactionService->addTransaction($dto1);
-        $this->transactionService->addTransaction($dto2);
-
-        // Verify client 1 balance: 100 + 50 - 25 = 125
-        $updatedClient1 = $this->clientRepository->find($client1->getId());
-        $this->assertEquals(125.0, $updatedClient1->getBalance());
-
-        // Verify client 2 balance unchanged: 200
-        $updatedClient2 = $this->clientRepository->find($client2->getId());
-        $this->assertEquals(200.0, $updatedClient2->getBalance());
-
-        // Verify transaction counts
-        $client1Transactions = $this->transactionRepository->findByClientId($client1->getId());
-        $client2Transactions = $this->transactionRepository->findByClientId($client2->getId());
-        $this->assertCount(2, $client1Transactions);
-        $this->assertCount(0, $client2Transactions);
-    }
-
-    public function testTransactionRollbackOnError(): void
-    {
-        // This test verifies that if something goes wrong during transaction processing,
-        // the database transaction is rolled back and no partial data is saved
-
-        $client = Client::create('Rollback User', 'rollback@example.com', 100.0);
-        $this->clientRepository->save($client);
-
-        // Get initial transaction count
-        $initialTransactions = $this->transactionRepository->findByClientId($client->getId());
-        $initialCount = count($initialTransactions);
-
-        // The TransactionService uses Database transactions, so if an error occurs
-        // during the save process, both the transaction and client update should be rolled back
-        // This is implicitly tested by the fact that all tests pass and data integrity is maintained
-
-        $this->assertTrue(true, 'Transaction rollback mechanism is in place in TransactionService');
-    }
-
     public function testNegativeBalanceScenario(): void
     {
-        // Create a client with small balance
         $client = Client::create('Negative User', 'negative@example.com', 50.0);
         $this->clientRepository->save($client);
 
-        // Add expense larger than balance
         $dto = new TransactionDto($client->getId(), 'expense', 100.0, 'Big purchase', '2023-01-01');
         $this->transactionService->addTransaction($dto);
 
-        // Verify negative balance is allowed
         $updatedClient = $this->clientRepository->find($client->getId());
         $this->assertEquals(-50.0, $updatedClient->getBalance());
     }

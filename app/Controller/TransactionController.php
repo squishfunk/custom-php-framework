@@ -16,10 +16,12 @@ class TransactionController extends Controller
     private TransactionService $transactionService;
     private ClientService $clientService;
 
-    public function __construct()
-    {
-        $this->transactionService = new TransactionService();
-        $this->clientService = new ClientService();
+    public function __construct(
+        ?TransactionService $transactionService = null,
+        ?ClientService $clientService = null
+    ) {
+        $this->transactionService = $transactionService ?? new TransactionService();
+        $this->clientService = $clientService ?? new ClientService();
     }
 
     public function create()

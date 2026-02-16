@@ -17,10 +17,12 @@ class ClientController extends Controller
     private ClientService $clientService;
     private TransactionService $transactionService;
 
-    public function __construct()
-    {
-        $this->clientService = new ClientService();
-        $this->transactionService = new TransactionService();
+    public function __construct(
+        ?ClientService $clientService = null,
+        ?TransactionService $transactionService = null
+    ) {
+        $this->clientService = $clientService ?? new ClientService();
+        $this->transactionService = $transactionService ?? new TransactionService();
     }
 
     public function store(Request $request)
