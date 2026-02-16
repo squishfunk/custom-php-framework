@@ -37,6 +37,37 @@ class ClientRepository
 
         return $users;
     }
+
+    public function findPaginated(int $page, int $perPage): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $countStmt = $this->db->query('SELECT COUNT(*) FROM clients');
+        $total = (int) $countStmt->fetchColumn();
+
+        $stmt = $this->db->prepare('SELECT * FROM clients LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $clients = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $clients[] = new Client(
+                (int) $row['id'],
+                $row['name'],
+                $row['email'],
+                (float) $row['balance'],
+                $row['created_at'],
+                $row['updated_at']
+            );
+        }
+
+        return [
+            'items' => $clients,
+            'total' => $total,
+            'pages' => (int) ceil($total / $perPage)
+        ];
+    }
     
     public function findByEmail(string $email): ?Client
     {

@@ -3,6 +3,7 @@
 use App\Core\Router;
 use App\Middleware\SessionMiddleware;
 use App\Middleware\CsrfMiddleware;
+use App\Middleware\RateLimitMiddleware;
 use App\Controller\ClientController;
 use App\Controller\AuthController;
 use App\Controller\TransactionController;
@@ -15,9 +16,12 @@ $router->use(new CsrfMiddleware());
 
 // Auth
 $router->get('/login', [AuthController::class, 'showLogin']);
-$router->post('/login', [AuthController::class, 'login']);
+$router->post('/login', [AuthController::class, 'login'])
+    ->addMiddleware(new RateLimitMiddleware(5, 1, 'login'));
 $router->get('/register', [AuthController::class, 'showRegister']);
-$router->post('/register', [AuthController::class, 'register']);
+$router->post('/register', [AuthController::class, 'register'])
+    ->addMiddleware(new RateLimitMiddleware(3, 5, 'register'));
+
 
 $router->post('/logout', [AuthController::class, 'logout'])
     ->addMiddleware(new \App\Middleware\AuthMiddleware());

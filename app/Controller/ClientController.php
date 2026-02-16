@@ -122,12 +122,22 @@ class ClientController extends Controller
         $this->redirect('/');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $clients = $this->clientService->getAllClients();
+        $page = (int) $request->query('page', 1);
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        $paginated = $this->clientService->getClientsPaginated($page, 10);
 
         return $this->render('client/index.html.twig', [
-            'clients' => $clients
+            'clients' => $paginated['items'],
+            'pagination' => [
+                'page' => $paginated['page'],
+                'pages' => $paginated['pages'],
+                'total' => $paginated['total']
+            ]
         ]);
     }
 }

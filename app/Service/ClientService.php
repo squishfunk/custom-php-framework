@@ -59,6 +59,17 @@ class ClientService
         return $this->clientRepository->findAll();
     }
 
+    public function getClientsPaginated(int $page, int $perPage = 10): array
+    {
+        $result = $this->clientRepository->findPaginated($page, $perPage);
+        return [
+            'items' => $result['items'],
+            'total' => $result['total'],
+            'pages' => $result['pages'],
+            'page' => $page
+        ];
+    }
+
     public function updateClient(int $id, ClientDto $dto): void
     {
         $client = $this->clientRepository->find($id);
