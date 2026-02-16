@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Middleware;
 
 use App\Core\CsrfToken;
+use App\Core\MiddlewareInterface;
 use App\Core\Request;
 use App\Core\Response;
 
-class CsrfMiddleware
+class CsrfMiddleware implements MiddlewareInterface
 {
     private array $excludedRoutes = [];
 
@@ -15,18 +18,18 @@ class CsrfMiddleware
         $this->excludedRoutes = $excludedRoutes;
     }
 
-    public function __invoke(Request $request): ?Response
+    public function handle(Request $request, callable $next): Response
     {
         $method = $request->getMethod();
 
         if (!in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH'])) {
-            return null;
+            return $next($request);
         }
 
         $path = $request->getPath();
         foreach ($this->excludedRoutes as $excludedRoute) {
             if (strpos($path, $excludedRoute) === 0) {
-                return null;
+                return $next($request);
             }
         }
 
@@ -36,6 +39,6 @@ class CsrfMiddleware
             return new Response('Invalid CSRF token', 403);
         }
 
-        return null;
+        return $next($request);
     }
 }

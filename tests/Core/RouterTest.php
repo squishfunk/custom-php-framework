@@ -4,11 +4,30 @@ declare(strict_types=1);
 
 namespace Tests\Core;
 
+use App\Core\MiddlewareInterface;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Router;
 use App\Core\Exception\HttpException;
 use PHPUnit\Framework\TestCase;
+
+class TestMiddleware implements MiddlewareInterface
+{
+    private ?Response $response;
+
+    public function __construct(?Response $response = null)
+    {
+        $this->response = $response;
+    }
+
+    public function handle(Request $request, callable $next): Response
+    {
+        if ($this->response !== null) {
+            return $this->response;
+        }
+        return $next($request);
+    }
+}
 
 class TestController
 {
@@ -98,9 +117,13 @@ class RouterTest extends TestCase
     public function testGlobalMiddleware(): void
     {
         $middlewareCalled = false;
-        $middleware = function (Request $request) use (&$middlewareCalled) {
-            $middlewareCalled = true;
-            return null;
+        $middleware = new class($middlewareCalled) implements MiddlewareInterface {
+            public function __construct(private &$called) {}
+            public function handle(Request $request, callable $next): Response
+            {
+                $this->called = true;
+                return $next($request);
+            }
         };
 
         $this->router->use($middleware);
@@ -114,10 +137,7 @@ class RouterTest extends TestCase
 
     public function testGlobalMiddlewareReturnsResponse(): void
     {
-        // TODO Middleware should return next(request)
-        $middleware = function (Request $request) {
-            return new Response('Intercepted', 403);
-        };
+        $middleware = new TestMiddleware(new Response('Intercepted', 403));
 
         $this->router->use($middleware);
         $this->router->get('/test', [TestController::class, 'index']);
@@ -132,9 +152,13 @@ class RouterTest extends TestCase
     public function testRouteSpecificMiddleware(): void
     {
         $middlewareCalled = false;
-        $middleware = function (Request $request) use (&$middlewareCalled) {
-            $middlewareCalled = true;
-            return null;
+        $middleware = new class($middlewareCalled) implements MiddlewareInterface {
+            public function __construct(private &$called) {}
+            public function handle(Request $request, callable $next): Response
+            {
+                $this->called = true;
+                return $next($request);
+            }
         };
 
         $this->router
@@ -149,9 +173,7 @@ class RouterTest extends TestCase
 
     public function testRouteSpecificMiddlewareReturnsResponse(): void
     {
-        $middleware = function (Request $request) {
-            return new Response('Route blocked', 401);
-        };
+        $middleware = new TestMiddleware(new Response('Route blocked', 401));
 
         $this->router
             ->get('/test', [TestController::class, 'index'])

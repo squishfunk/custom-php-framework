@@ -6,24 +6,21 @@ namespace App\Core;
 
 use App\Core\Exception\HttpException;
 
-/**
- * Simple router for handling HTTP routes
- */
 class Router
 {
-    /** @var array<string, array<string, callable>> */
+    /** @var array<string, array<string, array{handler: array, middlewares: array<MiddlewareInterface>}>> */
     private array $routes = [];
 
-    /** @var array<callable> */
-    private array $middlewares = [];
-
-    public function use(callable $middleware): void
-    {
-        $this->middlewares[] = $middleware;
-    }
+    /** @var array<MiddlewareInterface> */
+    private array $globalMiddlewares = [];
 
     /** @var array{method: string, path: string}|null */
     private ?array $lastRoute = null;
+
+    public function use(MiddlewareInterface $middleware): void
+    {
+        $this->globalMiddlewares[] = $middleware;
+    }
 
     private function setRoute(string $method, string $path, array $handler): void
     {
@@ -47,7 +44,7 @@ class Router
         return $this;
     }
 
-    public function addMiddleware(callable $middleware): self
+    public function addMiddleware(MiddlewareInterface $middleware): self
     {
         if ($this->lastRoute) {
             $this->routes[$this->lastRoute['method']][$this->lastRoute['path']]['middlewares'][] = $middleware;
@@ -60,20 +57,12 @@ class Router
         $method = $request->getMethod();
         $path = $request->getPath();
 
-        // global middlewares
-        foreach ($this->middlewares as $middleware) {
-            $response = $middleware($request);
-            if ($response instanceof Response) {
-                return $response;
-            }
-        }
-
         if (!isset($this->routes[$method])) {
             throw new HttpException($path, 404);
         }
 
         $matchedHandler = null;
-        $matchedMiddlewares = [];
+        $routeMiddlewares = [];
         $params = [];
 
         foreach ($this->routes[$method] as $routePath => $routeConfig) {
@@ -84,7 +73,7 @@ class Router
             if (preg_match($pattern, $path, $matches)) {
                 array_shift($matches);
                 $matchedHandler = $routeConfig['handler'];
-                $matchedMiddlewares = $routeConfig['middlewares'];
+                $routeMiddlewares = $routeConfig['middlewares'];
                 $params = $matches;
                 break;
             }
@@ -94,14 +83,20 @@ class Router
             throw new HttpException($path, 404);
         }
 
-        foreach ($matchedMiddlewares as $middleware) {
-            $response = $middleware($request);
-            if ($response instanceof Response) {
-                return $response;
-            }
+        $pipeline = new MiddlewarePipeline();
+
+        foreach ($this->globalMiddlewares as $middleware) {
+            $pipeline->add($middleware);
+        }
+
+        foreach ($routeMiddlewares as $middleware) {
+            $pipeline->add($middleware);
         }
 
         [$class, $methodName] = $matchedHandler;
-        return (new $class())->$methodName($request, ...$params);
+
+        return $pipeline->handle($request, function (Request $request) use ($class, $methodName, $params): Response {
+            return (new $class())->$methodName($request, ...$params);
+        });
     }
 }

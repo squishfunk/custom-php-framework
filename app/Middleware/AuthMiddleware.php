@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Middleware;
 
+use App\Core\MiddlewareInterface;
 use App\Core\Request;
 use App\Core\Response;
 
-class AuthMiddleware
+class AuthMiddleware implements MiddlewareInterface
 {
-    public function __invoke(Request $request): ?Response
+    public function handle(Request $request, callable $next): Response
     {
-
-
         if (!isset($_SESSION['admin_id'])) {
-            header('Location: /login');
-            exit;
+            return new Response('', 302, ['Location' => '/login']);
         }
 
-        return null;
+        return $next($request);
     }
 }
