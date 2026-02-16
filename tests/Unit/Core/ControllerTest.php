@@ -7,6 +7,7 @@ namespace Tests\Core;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
 class TestableController extends Controller
@@ -22,6 +23,7 @@ class TestableController extends Controller
     }
 }
 
+#[AllowMockObjectsWithoutExpectations]
 class ControllerTest extends TestCase
 {
     private TestableController $controller;

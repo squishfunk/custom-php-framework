@@ -42,7 +42,6 @@ class RateLimitMiddlewareTest extends TestCase
         $middleware = new RateLimitMiddleware(2, 1, 'test');
         $request = new Request('POST', '/test');
 
-        // First 2 requests should pass (failed auth - to keep attempts)
         $middleware->handle($request, function ($req) {
             return new Response('Invalid credentials', 401);
         });
@@ -51,7 +50,6 @@ class RateLimitMiddlewareTest extends TestCase
             return new Response('Invalid credentials', 401);
         });
 
-        // Third request should be blocked
         $response = $middleware->handle($request, function ($req) {
             return new Response('Success', 200);
         });
@@ -65,12 +63,10 @@ class RateLimitMiddlewareTest extends TestCase
         $middleware = new RateLimitMiddleware(5, 1, 'test');
         $request = new Request('POST', '/test');
 
-        // Make a successful request
         $middleware->handle($request, function ($req) {
             return new Response('Success', 200);
         });
 
-        // Session should be cleared after success
         $this->assertEmpty($_SESSION);
     }
 
@@ -79,12 +75,10 @@ class RateLimitMiddlewareTest extends TestCase
         $middleware = new RateLimitMiddleware(5, 1, 'test');
         $request = new Request('POST', '/test');
 
-        // Make a failed request (401 unauthorized)
         $middleware->handle($request, function ($req) {
             return new Response('Unauthorized', 401);
         });
 
-        // Session should still have attempt count
         $this->assertNotEmpty($_SESSION);
         $ip = $_SERVER['REMOTE_ADDR'];
         $this->assertEquals(1, $_SESSION['test_' . $ip]['attempts']);
